@@ -9,12 +9,12 @@
 | Field | Value |
 |---|---|
 | Last updated | 2026-10-26 |
-| Current stage | Stage 1 (decisions mostly made) → Stage 2 (Engineering foundation, in progress) |
-| Active task | ASG-004 — see `CURRENT_SPRINT.md` (ASG-003 remains IN REVIEW, awaiting owner content review) |
-| Overall status | **Stack accepted (ADR-0002). Engineering scaffold (ASG-004) in progress. No business-domain code exists.** |
+| Current stage | Stage 2 — Engineering foundation (scaffold built; gate not yet met) |
+| Active task | ASG-004 (IN REVIEW) — see `CURRENT_SPRINT.md`. ASG-003 also IN REVIEW (owner content review pending) |
+| Overall status | **Stack accepted (ADR-0002). Engineering scaffold built and verified locally (API 12 tests, web 4 tests, lint/type/build). CI defined but never run on GitHub. No business-domain code, models or migrations exist.** |
 | Base commit (remote `main`) | `7ff17b7` |
 | Working branch | `feat/asg-004-engineering-foundation` (local only, stacked on `chore/bootstrap-foundation`; **never pushed**) |
-| Last verified against repo | 2026-10-26 (fresh clone of `s3ct1999-404/ASG-ERP-SYSTEM`) |
+| Last verified against repo | 2026-10-26 (fresh clone of `s3ct1999-404/ASG-ERP-SYSTEM`; scaffold re-verified in a second clean clone of the local branch) |
 | Next exact task | See `NEXT_SESSION.md` |
 
 ### Evidence-based summary
@@ -45,11 +45,12 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 - [ ] **Gate:** no critical ambiguity in tenancy, ledger, sync, app lifecycle
 
 ### Stage 2 — Repository and engineering foundation
-- [ ] Workspace structure, local dev instructions — ASG-004
-- [ ] Formatter/linter/type-checker/test runner — ASG-004
-- [ ] CI pipeline — ASG-004
-- [ ] Migration/seed conventions, health endpoint, structured logging
-- [ ] **Gate:** clean checkout installs, tests, starts via documented commands
+- [x] Workspace structure, local dev instructions (`docs/runbooks/local-development.md`) — ASG-004; followed in a clean clone
+- [x] Formatter/linter/type-checker/test runner (ruff, mypy, pytest; eslint, prettier, tsc, vitest) — ASG-004
+- [ ] CI pipeline — **defined** (`.github/workflows/ci.yml`), **never run on GitHub** (R-009)
+- [~] Migration conventions: `makemigrations --check` in place and passing (no models yet); seed conventions not started
+- [x] Health endpoints (live/ready) and structured JSON logging with request IDs
+- [ ] **Gate:** clean checkout installs, tests, starts via documented commands — met locally (this sandbox); **not confirmed on CI or on another machine**
 
 ### Stage 3 — Shared platform core
 - [ ] Auth/session lifecycle
@@ -89,7 +90,7 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 | ASG-001 | Decide stack and repository/workspace model | P0 | **DONE** | — | ADR-0002 status is `Accepted` with owner approval recorded; rejected alternatives and consequences documented; `.gitignore`/tooling follow-up tasks created | ADR-0002 status `Accepted`; owner approval recorded in-session 2026-10-26; rejected/deferred alternatives documented; follow-ups = ASG-004, tenancy ADR, ADR-0003 | Team skills unknown → tracked assumption A-001 (revisit before Stage 3) |
 | ASG-002 | Document tenant/company/branch and permission boundaries | P0 | NOT STARTED | ASG-001 not required for the model itself; D-004 | ADR + data dictionary state scope (tenant/company/branch) for every entity in Blueprint §4; deny-by-default rule and scope-check points listed | — | |
 | ASG-003 | Establish project instructions and session handoff process | P0 | **IN REVIEW** | — | `PROGRESS.md`, `CLAUDE.md`, `CURRENT_SPRINT.md`, `NEXT_SESSION.md` exist, are mutually consistent, and direct sessions to read them first; owner has reviewed | Structural check recorded in `NEXT_SESSION.md` (not yet owner-reviewed) | Awaiting owner review and commit decision |
-| ASG-004 | Set up local development and CI | P1 | **IN PROGRESS** | ASG-001 (done) | Clean checkout installs/tests/starts via documented commands; CI runs lint, type-check, tests, and fails on a seeded failure | — | Includes `.env.example` (placeholders only) |
+| ASG-004 | Set up local development and CI | P1 | **IN REVIEW** | ASG-001 (done) | Clean checkout installs/tests/starts via documented commands; CI runs lint, type-check, tests, and fails on a seeded failure | Local: all checks PASS in a fresh clone (see `NEXT_SESSION.md`); seeded failure → pytest rc=1. **Missing: a CI run on GitHub; Docker Compose not run** | Cannot be DONE until CI has run (R-009). Includes `.env.example` (placeholders only) |
 | ASG-005 | Implement tenant/company/branch creation | P1 | NOT STARTED | ASG-001, ASG-002, ASG-004 | Tenant→company→branch creatable via API; scope persisted; audit event recorded; tests: success/denial/invalid | — | |
 | ASG-006 | Implement scoped membership/roles and cross-tenant tests | P0 | NOT STARTED | ASG-005 | User with branch-A scope cannot read/write branch B or another tenant (API, report, export); automated tests prove denial | — | Gate for Stage 3 |
 | ASG-007 | Define product/customer data contracts | P1 | NOT STARTED | ASG-002 | Contracts + OpenAPI fragments reviewed; scope per entity stated | — | |
@@ -129,7 +130,7 @@ All applications: `NOT STARTED` (no code exists). Order is decided by the roadma
 |---|---|---|---|---|---|
 | R-001 | Blocker | Stack not decided | — | Product owner | **Closed 2026-10-26** (ADR-0002 accepted) |
 | R-008 | Defect (dev-only) | `npm audit` reports 1 **high** advisory in `undici@8.11.2`, reached only via `jsdom` (test tooling; not in the production bundle; our tests mock all fetches). Patched in `undici>=8.12.2`, whose releases are <14 days old (cooling-off rule). CI blocks on production-dependency audit only and shows the full audit non-blockingly | Test-tooling exposure only | Agent/Owner | **Open — action on/after 2026-10-29:** run `npm audit fix` (or add an override to `>=8.12.2`), re-run web checks, close this row |
-| R-009 | Risk | CI workflow has **never run on GitHub** (no push permitted; D-018). Local equivalents were run instead | CI-only failures (e.g. services, caching) undetected | Owner | Open until first CI run is recorded |
+| R-009 | Risk | CI workflow has **never run on GitHub** (no push permitted; D-018); `docker-compose.yml` was **never run** (no Docker in the sandbox — a locally installed PostgreSQL 16 was used instead). Local equivalents were run | CI-only failures (e.g. services, caching) undetected | Owner | Open until first CI run is recorded |
 | R-010 | Risk | Deployment hardening deferred (A-002): `SECURE_SSL_REDIRECT`/HSTS off by default, no `SECURE_PROXY_SSL_HEADER`; CSRF middleware not enabled because no cookie/session auth exists yet (revisit in ASG-006); no rate limiting yet; GitHub Actions pinned by major tag, not SHA; no secret-scanning job (SEC-002 not yet met); `postgres:16` image not digest-pinned | Must be resolved before any pilot | Product owner | Open |
 | R-007 | Risk | Team skills unknown (A-001), deployment (A-002) and scale (A-003) assumed | Rework risk if wrong | Product owner | Open — revisit before Stage 3 |
 | R-002 | Risk | Starter Pack (skills/agents/rules) not supplied | Rules authored from Blueprint; skills deferred (ASG-016) | Product owner | Open |
@@ -148,3 +149,4 @@ Authoritative list: `docs/product/decision-register.md`. Decisions still blockin
 |---|---|---|
 | 2026-10-26 | Initial creation during bootstrap (ASG-003). Statuses reflect an empty repository. | Agent |
 | 2026-10-26 | ADR-0002 accepted by owner; ASG-001 DONE; ASG-004 started. | Agent |
+| 2026-10-26 | ASG-004 scaffold built and verified locally; set IN REVIEW (CI not yet run). Risks R-008…R-010 added. | Agent |
