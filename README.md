@@ -2,7 +2,7 @@
 
 ASG ERP — a configurable, multi-tenant, offline-capable business-management platform (initial market: Uganda).
 
-**Status:** pre-implementation. The foundation, decision records and progress system exist; no application code and no technology stack yet. See [`PROGRESS.md`](PROGRESS.md) for current status.
+**Status:** early foundation. The stack is decided ([ADR-0002](docs/adr/0002-technology-stack.md)) and an engineering scaffold exists (API health endpoints, web shell, CI definition). **No business features exist yet.** See [`PROGRESS.md`](PROGRESS.md) for current status.
 
 ## Start here
 | Purpose | File |
@@ -17,4 +17,4 @@ ASG ERP — a configurable, multi-tenant, offline-capable business-management pl
 | Uganda compliance (templates, unverified) | [`docs/compliance/uganda/`](docs/compliance/uganda/) |
 
 ## Running the project
-Not yet possible — the stack is undecided ([ADR-0002](docs/adr/0002-technology-stack.md)). Instructions will be added with ASG-004.
+See [`docs/runbooks/local-development.md`](docs/runbooks/local-development.md). Layout: `services/api` (Django + DRF), `apps/web` (React + TypeScript), `docs/api/openapi.yaml` (API contract).

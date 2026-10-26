@@ -1,0 +1,6 @@
+# Direct runtime dependencies (loose). Pinned, transitive set lives in base.txt.
+# Django stays on the 5.2 LTS line deliberately (newer majors exist; upgrade via an ADR/task).
+Django>=5.2,<5.3
+djangorestframework
+drf-spectacular
+psycopg[binary]

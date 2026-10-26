@@ -128,6 +128,9 @@ All applications: `NOT STARTED` (no code exists). Order is decided by the roadma
 | ID | Type | Description | Impact | Owner | Status |
 |---|---|---|---|---|---|
 | R-001 | Blocker | Stack not decided | — | Product owner | **Closed 2026-10-26** (ADR-0002 accepted) |
+| R-008 | Defect (dev-only) | `npm audit` reports 1 **high** advisory in `undici@8.11.2`, reached only via `jsdom` (test tooling; not in the production bundle; our tests mock all fetches). Patched in `undici>=8.12.2`, whose releases are <14 days old (cooling-off rule). CI blocks on production-dependency audit only and shows the full audit non-blockingly | Test-tooling exposure only | Agent/Owner | **Open — action on/after 2026-10-29:** run `npm audit fix` (or add an override to `>=8.12.2`), re-run web checks, close this row |
+| R-009 | Risk | CI workflow has **never run on GitHub** (no push permitted; D-018). Local equivalents were run instead | CI-only failures (e.g. services, caching) undetected | Owner | Open until first CI run is recorded |
+| R-010 | Risk | Deployment hardening deferred (A-002): `SECURE_SSL_REDIRECT`/HSTS off by default, no `SECURE_PROXY_SSL_HEADER`; CSRF middleware not enabled because no cookie/session auth exists yet (revisit in ASG-006); no rate limiting yet; GitHub Actions pinned by major tag, not SHA; no secret-scanning job (SEC-002 not yet met); `postgres:16` image not digest-pinned | Must be resolved before any pilot | Product owner | Open |
 | R-007 | Risk | Team skills unknown (A-001), deployment (A-002) and scale (A-003) assumed | Rework risk if wrong | Product owner | Open — revisit before Stage 3 |
 | R-002 | Risk | Starter Pack (skills/agents/rules) not supplied | Rules authored from Blueprint; skills deferred (ASG-016) | Product owner | Open |
 | R-003 | Risk | No GitHub MCP/write access in bootstrap session | Nothing pushed; issues not aligned | Product owner | Open |

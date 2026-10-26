@@ -26,3 +26,16 @@ tmp/
 
 # NOTE: stack-specific ignores (node_modules, __pycache__, build output, etc.)
 # are added when ADR-0002 (stack) is approved. See PROGRESS.md ASG-001/ASG-004.
+
+# --- Stack-specific (ADR-0002: Django + React monorepo) ---
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# Node
+node_modules/
+dist/
+coverage/

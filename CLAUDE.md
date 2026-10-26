@@ -28,7 +28,7 @@ Conflicting authoritative sources: do not pick silently — record the conflict 
 - Never claim tests/builds/migrations passed unless run. Report `PASS` / `FAIL` / `NOT RUN` / `BLOCKED`.
 - Mark stubs, mocks and TODOs explicitly. A feature is not `DONE` because files exist.
 - Synthetic data only. No secrets in files, logs, prompts or handoffs.
-- Stack is **not yet decided** (ADR-0002 proposed). Do not install frameworks until it is accepted.
+- Stack is decided (ADR-0002 accepted: Django + React monorepo). Mobile/desktop and tenancy-data approach are NOT decided — do not create `apps/mobile`, `apps/desktop` or tenant-scoped tables.
 - Ask when a decision touches data integrity, security, tenancy, accounting, offline conflicts or compliance and no approved decision covers it.
 - Uganda tax/EFRIS/payroll/privacy rules: never from memory; verified official sources only (`docs/compliance/uganda/`).
 
@@ -39,4 +39,10 @@ After a task or material progress · a defect or unmet requirement · a decision
 `docs/ASG_ERP_MASTER_BLUEPRINT.md` blueprint · `REQUIREMENTS.md` requirement IDs · `ROADMAP.md` stages/gates · `ARCHITECTURE.md`, `SECURITY.md`, `OFFLINE_SYNC.md`, `APP_PLATFORM.md` design · `docs/adr/` decisions · `docs/product/decision-register.md` owner decisions · `.claude/rules/` detailed rules · `CHANGELOG.md`.
 
 ## Verification commands
-**Not yet defined** — they will be documented here when the stack is accepted (ASG-001 → ASG-004). Until then only structural/documentation checks apply.
+Stack: Django + DRF + PostgreSQL (`services/api`), React + TypeScript (`apps/web`). Full setup: `docs/runbooks/local-development.md`.
+- API (`cd services/api`, venv active, `.env` exported, PostgreSQL running): `ruff check .` · `ruff format --check .` · `mypy .` · `python manage.py makemigrations --check --dry-run` · `python -m pytest`
+- Web (`cd apps/web`): `npm run lint` · `npm run format:check` · `npm run typecheck` · `npm test` · `npm run build`
+- Dependency audits: `pip-audit -r requirements/dev.txt --no-deps --disable-pip` · `npm audit --omit=dev --audit-level=high`
+- OpenAPI contract (`docs/api/openapi.yaml`) must match the code; a test enforces it.
+Report each as PASS/FAIL/NOT RUN/BLOCKED. CI (`.github/workflows/ci.yml`) has **never run on GitHub** until a result is recorded in `PROGRESS.md`.
+Do not add `django.contrib.auth` or any tenant-scoped model before the identity design and tenancy ADR (ASG-002/ASG-006).

@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: ASG ERP API
+  version: 0.1.0
+  description: 'Versioned REST API for ASG ERP. Contract-first: see docs/api/openapi.yaml.'
+paths:
+  /api/v1/health/live/:
+    get:
+      operationId: live_retrieve
+      description: 'Liveness: the process is up and serving requests.'
+      summary: Liveness probe
+      tags:
+      - live
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/health/ready/:
+    get:
+      operationId: ready_retrieve
+      description: 'Readiness: the process can reach its database.'
+      summary: Readiness probe
+      tags:
+      - ready
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+components:
+  schemas:
+    Health:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+      required:
+      - status
+    StatusEnum:
+      enum:
+      - ok
+      - unavailable
+      type: string
+      description: |-
+        * `ok` - ok
+        * `unavailable` - unavailable

@@ -1,6 +1,9 @@
 # Architecture
 
-*Status: skeleton. Canonical principles: Blueprint §4–§6. Stack: **undecided** (`docs/adr/0002-technology-stack.md`, Proposed). This file records only what the Blueprint already fixes plus open design work.*
+*Status: skeleton. Canonical principles: Blueprint §4–§6. Stack: Django + DRF + PostgreSQL, React + TypeScript, monorepo (`docs/adr/0002-technology-stack.md`, Accepted). Mobile/desktop and the tenancy data-isolation approach are deliberately undecided. This file records what the Blueprint fixes, the current scaffold, and open design work.*
+
+## Current scaffold (ASG-004)
+`services/api` (Django project `config`, app `core` with `/api/v1/health/{live,ready}/`; no domain models, **no auth app yet by design**) · `apps/web` (Vite shell) · `docs/api/openapi.yaml` (generated contract, drift-tested) · `.github/workflows/ci.yml` · `docker-compose.yml` (local PostgreSQL only).
 
 ## Fixed principles
 - **Modular monolith first**; microservices only with an accepted ADR. Modules have explicit contracts and do not reach into each other's internals.

@@ -1,0 +1,24 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "DJ"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+exclude = ["^\\.venv/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings_test"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings_test"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
