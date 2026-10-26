@@ -1,9 +1,9 @@
 # ADR-0002: Technology stack and workspace model
 
-- Status: **PROPOSED — NOT ACCEPTED. No stack has been selected.**
+- Status: **ACCEPTED (2026-10-26)** — Decisions 1, 2 and 4 accepted by the product owner; Decisions 3 and 5 remain deferred (see below).
 - Date: 2026-10-26
-- Deciders: Product owner (pending). Drafted by agent.
-- Task: ASG-001 (BLOCKED on owner)
+- Deciders: Product owner (approved in session on 2026-10-26: "Approve the recommendation (Django + React)"). Drafted by agent.
+- Task: ASG-001
 
 ## Context
 The repository is empty (README title only). Blueprint §5.2 requires comparing reasonable choices, then selecting **one coherent default stack** after confirming constraints. Constraints that are **unknown** and materially affect the choice: team skills (D-003), deployment target (D-002), scale (D-013), first-release offline needs (D-005), supported devices (D-006). The recommendation below is therefore conditional.
@@ -52,4 +52,23 @@ Follow-up tasks: ASG-004 (tooling/CI/`.env.example`), stack-specific `.gitignore
 5. Approve, amend or reject the recommendation above.
 
 ## Decision
-*Pending owner.*
+Accepted by the product owner on 2026-10-26:
+- **Backend:** Django + Django REST Framework, PostgreSQL, as a modular monolith (Decision 1, option A).
+- **Web:** React + TypeScript (Decision 2).
+- **Workspace:** single monorepo (Decision 4).
+
+**Not decided (remain open):**
+- Mobile and desktop frameworks — ADR-0003 after the offline action matrix (ASG-012). `apps/mobile` and `apps/desktop` are not created.
+- Multi-tenancy data-isolation approach — own ADR after ASG-002. **No tenant-scoped domain tables may be created before it.**
+
+## Tracked assumptions (owner answered "not sure yet" / did not answer)
+| ID | Assumption | Risk if wrong | Owner | Revisit by |
+|---|---|---|---|---|
+| A-001 | The team can work in both Python and TypeScript (D-003 skills question answered "not sure yet"). | Maintenance/hiring cost; recommendation was explicitly conditional on skills. | Product owner | Before Stage 3 (before significant domain code) |
+| A-002 | Deployment is cloud-hosted and containerised (D-002 unanswered). | Customer-hosted installs would add packaging/ops requirements. | Product owner | Before ASG-002 completes |
+| A-003 | Scale is modest at pilot (D-013 unanswered); no sharding or special sizing is designed. | Tenancy/DB design may need rework. | Product owner | Before the tenancy ADR |
+
+If A-001 proves false (e.g. TypeScript-only team), supersede this ADR **before** Stage 3; the scaffold (ASG-004) is intentionally small to keep that cheap.
+
+## Consequences
+Python and TypeScript coexist in one repo with separate toolchains and CI jobs. The API contract (OpenAPI) is the boundary between them. Follow-up: ASG-004 (scaffold, CI, `.env.example`), tenancy ADR, ADR-0003 (mobile/desktop).

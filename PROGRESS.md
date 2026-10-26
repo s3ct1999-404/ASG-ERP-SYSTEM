@@ -9,13 +9,13 @@
 | Field | Value |
 |---|---|
 | Last updated | 2026-10-26 |
-| Current stage | Stage 0 → Stage 1 (Product definition / Architecture decisions) |
-| Active task | ASG-003 — see `CURRENT_SPRINT.md` |
-| Overall status | **Foundation docs drafted, awaiting owner review. No application code exists. No stack is selected.** |
+| Current stage | Stage 1 (decisions mostly made) → Stage 2 (Engineering foundation, in progress) |
+| Active task | ASG-004 — see `CURRENT_SPRINT.md` (ASG-003 remains IN REVIEW, awaiting owner content review) |
+| Overall status | **Stack accepted (ADR-0002). Engineering scaffold (ASG-004) in progress. No business-domain code exists.** |
 | Base commit (remote `main`) | `7ff17b7` |
-| Working branch | `chore/bootstrap-foundation` (local; **uncommitted**, not pushed) |
+| Working branch | `feat/asg-004-engineering-foundation` (local only, stacked on `chore/bootstrap-foundation`; **never pushed**) |
 | Last verified against repo | 2026-10-26 (fresh clone of `s3ct1999-404/ASG-ERP-SYSTEM`) |
-| Next exact task | Owner review of bootstrap + decision on ADR-0002 → closes ASG-003 and ASG-001 (see `NEXT_SESSION.md`) |
+| Next exact task | See `NEXT_SESSION.md` |
 
 ### Evidence-based summary
 - Remote repo contained only a title-only `README.md`; the Blueprint was added in `e54e53a` and deleted in `7ff17b7`. It is restored here at `docs/ASG_ERP_MASTER_BLUEPRINT.md` (owner to confirm the deletion was not intentional — see decision D-016).
@@ -36,8 +36,8 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 
 ### Stage 1 — Architecture and technical decisions
 - [x] Decision register created (`docs/product/decision-register.md`)
-- [x] Stack ADR **proposed** (`docs/adr/0002-technology-stack.md`) — *not accepted*
-- [ ] Stack/workspace decision accepted by owner
+- [x] Stack ADR (`docs/adr/0002-technology-stack.md`) — **Accepted 2026-10-26** (backend/web/monorepo); mobile/desktop and tenancy-data approach deliberately deferred
+- [x] Stack/workspace decision accepted by owner
 - [ ] Tenant/company/branch scope model (ADR + data dictionary) — ASG-002
 - [ ] Offline support matrix — ASG-012
 - [ ] App manifest/lifecycle design — ASG-014
@@ -86,10 +86,10 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 
 | ID | Title | Pri | Status | Depends on | Acceptance criteria (observable) | Evidence | Notes |
 |---|---|---|---|---|---|---|---|
-| ASG-001 | Decide stack and repository/workspace model | P0 | **BLOCKED** (awaiting owner) | D-002, D-003, D-013 | ADR-0002 status is `Accepted` with owner approval recorded; rejected alternatives and consequences documented; `.gitignore`/tooling follow-up tasks created | ADR-0002 drafted as `Proposed` only | Not decided by the agent (task card rule 7) |
+| ASG-001 | Decide stack and repository/workspace model | P0 | **DONE** | — | ADR-0002 status is `Accepted` with owner approval recorded; rejected alternatives and consequences documented; `.gitignore`/tooling follow-up tasks created | ADR-0002 status `Accepted`; owner approval recorded in-session 2026-10-26; rejected/deferred alternatives documented; follow-ups = ASG-004, tenancy ADR, ADR-0003 | Team skills unknown → tracked assumption A-001 (revisit before Stage 3) |
 | ASG-002 | Document tenant/company/branch and permission boundaries | P0 | NOT STARTED | ASG-001 not required for the model itself; D-004 | ADR + data dictionary state scope (tenant/company/branch) for every entity in Blueprint §4; deny-by-default rule and scope-check points listed | — | |
 | ASG-003 | Establish project instructions and session handoff process | P0 | **IN REVIEW** | — | `PROGRESS.md`, `CLAUDE.md`, `CURRENT_SPRINT.md`, `NEXT_SESSION.md` exist, are mutually consistent, and direct sessions to read them first; owner has reviewed | Structural check recorded in `NEXT_SESSION.md` (not yet owner-reviewed) | Awaiting owner review and commit decision |
-| ASG-004 | Set up local development and CI | P1 | NOT STARTED | ASG-001 | Clean checkout installs/tests/starts via documented commands; CI runs lint, type-check, tests, and fails on a seeded failure | — | Includes `.env.example` (placeholders only) |
+| ASG-004 | Set up local development and CI | P1 | **IN PROGRESS** | ASG-001 (done) | Clean checkout installs/tests/starts via documented commands; CI runs lint, type-check, tests, and fails on a seeded failure | — | Includes `.env.example` (placeholders only) |
 | ASG-005 | Implement tenant/company/branch creation | P1 | NOT STARTED | ASG-001, ASG-002, ASG-004 | Tenant→company→branch creatable via API; scope persisted; audit event recorded; tests: success/denial/invalid | — | |
 | ASG-006 | Implement scoped membership/roles and cross-tenant tests | P0 | NOT STARTED | ASG-005 | User with branch-A scope cannot read/write branch B or another tenant (API, report, export); automated tests prove denial | — | Gate for Stage 3 |
 | ASG-007 | Define product/customer data contracts | P1 | NOT STARTED | ASG-002 | Contracts + OpenAPI fragments reviewed; scope per entity stated | — | |
@@ -127,7 +127,8 @@ All applications: `NOT STARTED` (no code exists). Order is decided by the roadma
 
 | ID | Type | Description | Impact | Owner | Status |
 |---|---|---|---|---|---|
-| R-001 | Blocker | Stack not decided (ADR-0002 proposed) | Blocks Stage 2 onward | Product owner | Open |
+| R-001 | Blocker | Stack not decided | — | Product owner | **Closed 2026-10-26** (ADR-0002 accepted) |
+| R-007 | Risk | Team skills unknown (A-001), deployment (A-002) and scale (A-003) assumed | Rework risk if wrong | Product owner | Open — revisit before Stage 3 |
 | R-002 | Risk | Starter Pack (skills/agents/rules) not supplied | Rules authored from Blueprint; skills deferred (ASG-016) | Product owner | Open |
 | R-003 | Risk | No GitHub MCP/write access in bootstrap session | Nothing pushed; issues not aligned | Product owner | Open |
 | R-004 | Risk | Blueprint was deleted from `main` (`7ff17b7`) | Possible intentional removal; restored on branch only | Product owner | Open (D-016) |
@@ -136,10 +137,11 @@ All applications: `NOT STARTED` (no code exists). Order is decided by the roadma
 
 ## Open owner decisions
 
-Authoritative list: `docs/product/decision-register.md`. Decisions that block the next step: **D-002 (deployment), D-003 (team skills/stack), D-013 (scale), D-016 (Blueprint deletion)**.
+Authoritative list: `docs/product/decision-register.md`. Decisions still blocking: **D-016 (Blueprint deletion)** for pushing the bootstrap; **D-002/D-013** are deferred as assumptions A-002/A-003 and must be resolved before the tenancy ADR.
 
 ## Update log
 
 | Date | Change | By |
 |---|---|---|
 | 2026-10-26 | Initial creation during bootstrap (ASG-003). Statuses reflect an empty repository. | Agent |
+| 2026-10-26 | ADR-0002 accepted by owner; ASG-001 DONE; ASG-004 started. | Agent |

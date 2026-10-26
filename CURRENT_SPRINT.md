@@ -3,42 +3,43 @@
 > One active bounded task only. Overall status lives in `PROGRESS.md`.
 
 ## Milestone
-Stage 0/1 — Product definition and architecture decisions (bootstrap)
+Stage 2 — Repository and engineering foundation
 
 ## Active task
-**ASG-003 — Establish project instructions and session handoff process**
-Status: **IN REVIEW** (drafted; awaiting owner review)
+**ASG-004 — Set up local development and CI**
+Status: **IN PROGRESS**
+Branch: `feat/asg-004-engineering-foundation` (local; not pushed)
 
 ## Goal
-The repository, not chat history, holds the project's state: any new session can orient itself from files, verify them against Git, and continue with one exact next action.
+A clean checkout can be installed, tested and started from documented commands; CI enforces lint, type-check, tests and migration/contract checks. **No business-domain code.**
 
 ## Scope
-- Progress/handoff system: `PROGRESS.md`, `CURRENT_SPRINT.md`, `NEXT_SESSION.md`, `CLAUDE.md`, `ASG_ERP_AGENT_INSTRUCTIONS.md`
-- Baseline planning docs: `VISION.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `SECURITY.md`, `OFFLINE_SYNC.md`, `APP_PLATFORM.md`, `CHANGELOG.md`
-- Decision records: `docs/adr/`, `docs/product/decision-register.md`
-- Scoped rules: `.claude/rules/` (security, database, testing, offline-sync)
-- Uganda compliance **templates only**: `docs/compliance/uganda/`
-- Blueprint restored to `docs/ASG_ERP_MASTER_BLUEPRINT.md`
+- `services/api`: Django + DRF project, env-based settings (secure defaults), versioned `/api/v1/` health endpoints (live/ready), JSON structured logging, deny-by-default DRF permissions, OpenAPI generation, baseline tests
+- `apps/web`: React + TypeScript (Vite) shell with lint, type-check, test, build
+- `docs/api/openapi.yaml` generated and checked for drift
+- `docker-compose.yml` (local PostgreSQL only), `.env.example` (placeholders only)
+- `.github/workflows/ci.yml`
+- `docs/runbooks/local-development.md`; verification commands recorded in `CLAUDE.md`
+- Stack-specific `.gitignore` entries
 
 ## Out of scope
-- Any application code, framework install, CI, migrations
-- Selecting the stack (ASG-001 — proposal only, awaiting owner)
-- Compliance research (ASG-015), skills/agents (ASG-016), issue alignment (ASG-017)
+Tenancy, auth/users, any domain model or migration for business data (ASG-002 → ASG-006), mobile/desktop apps, deployment.
 
-## Acceptance criteria
-1. The four continuity files exist, agree with each other, and tell sessions to read them first. — *drafted; consistency check recorded*
-2. `CLAUDE.md` and `ASG_ERP_AGENT_INSTRUCTIONS.md` direct sessions to `PROGRESS.md`, `CURRENT_SPRINT.md`, `NEXT_SESSION.md` before editing. — *drafted*
-3. `CURRENT_SPRINT.md` names one task; `NEXT_SESSION.md` states one next action. — *met in drafts*
-4. No secrets, destructive changes, or unsupported compliance claims introduced. — *structural scan recorded; no human review yet*
-5. **Owner has reviewed the bootstrap.** — *NOT MET*
-
-Task moves to `DONE` only when criterion 5 is met and the owner decides how it is committed.
+## Acceptance criteria (observable)
+1. API installs from pinned requirements and starts; `GET /api/v1/health/live` returns 200 and `/health/ready` returns 200 with DB up and 503 with DB down (test).
+2. Settings refuse to start without `SECRET_KEY`, default `DEBUG` to false, and DRF default permission is deny-by-default (test).
+3. Logs are structured JSON (test) and contain no secrets.
+4. `ruff`, type-check and `pytest` pass against **PostgreSQL**; `makemigrations --check` and OpenAPI-drift checks pass.
+5. Web: install, lint, type-check, test and build pass.
+6. CI workflow defined for all of the above. **It can only be marked PASS once it actually runs on GitHub**; until then it is NOT RUN.
+7. A seeded failing test makes the local check fail (proves the gate bites).
+8. Documentation lets a new developer run everything (verified by following it from a clean clone in this environment).
 
 ## Dependencies
-None.
+ASG-001 (DONE).
 
 ## Verification plan
-Structural checks only (no stack exists): required files present; relative links resolve; statuses within allowed set; no secret-like strings; `git diff --check`; working tree shows no unintended changes. Results: `NEXT_SESSION.md`.
+Run each command locally, record exact results in `NEXT_SESSION.md`. CI file is syntactically validated locally but not executed.
 
-## Blocked on
-Owner review. ADR-0002 (stack) is a separate decision that blocks ASG-001 and Stage 2.
+## Parked (not active work)
+ASG-003 remains IN REVIEW awaiting owner content review. D-016 (Blueprint deletion) still open.
