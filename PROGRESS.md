@@ -38,7 +38,7 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 - [x] Decision register created (`docs/product/decision-register.md`)
 - [x] Stack ADR (`docs/adr/0002-technology-stack.md`) — **Accepted 2026-10-26** (backend/web/monorepo); mobile/desktop and tenancy-data approach deliberately deferred
 - [x] Stack/workspace decision accepted by owner
-- [ ] Tenant/company/branch scope model (ADR + data dictionary) — ASG-002
+- [~] Tenant/company/branch scope model (ADR-0003 **Proposed** + data dictionary drafted) — ASG-002; awaiting owner
 - [ ] Offline support matrix — ASG-012
 - [ ] App manifest/lifecycle design — ASG-014
 - [ ] Threat-model outline
@@ -88,7 +88,7 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 | ID | Title | Pri | Status | Depends on | Acceptance criteria (observable) | Evidence | Notes |
 |---|---|---|---|---|---|---|---|
 | ASG-001 | Decide stack and repository/workspace model | P0 | **DONE** | — | ADR-0002 status is `Accepted` with owner approval recorded; rejected alternatives and consequences documented; `.gitignore`/tooling follow-up tasks created | ADR-0002 status `Accepted`; owner approval recorded in-session 2026-10-26; rejected/deferred alternatives documented; follow-ups = ASG-004, tenancy ADR, ADR-0003 | Team skills unknown → tracked assumption A-001 (revisit before Stage 3) |
-| ASG-002 | Document tenant/company/branch and permission boundaries | P0 | NOT STARTED | ASG-001 not required for the model itself; D-004 | ADR + data dictionary state scope (tenant/company/branch) for every entity in Blueprint §4; deny-by-default rule and scope-check points listed | — | |
+| ASG-002 | Document tenant/company/branch and permission boundaries | P0 | **IN REVIEW** | D-004, D-020…D-024 (decisions) | ADR + data dictionary state scope (tenant/company/branch) for every entity in Blueprint §4; deny-by-default rule and scope-check points listed | Drafted: `docs/adr/0003-…` (**Proposed**), `database/docs/data-dictionary.md` (21 entities + Configuration; 10 enforcement points listed) | **DONE only when the owner accepts ADR-0003** (answers to D-020…D-024). Docs only — no models |
 | ASG-003 | Establish project instructions and session handoff process | P0 | **IN REVIEW** | — | `PROGRESS.md`, `CLAUDE.md`, `CURRENT_SPRINT.md`, `NEXT_SESSION.md` exist, are mutually consistent, and direct sessions to read them first; owner has reviewed | Structural check recorded in `NEXT_SESSION.md` (not yet owner-reviewed) | Awaiting owner review and commit decision |
 | ASG-004 | Set up local development and CI | P1 | **IN REVIEW** | ASG-001 (done) | Clean checkout installs/tests/starts via documented commands; CI runs lint, type-check, tests, and fails on a seeded failure | Local: all checks PASS in a fresh clone (see `NEXT_SESSION.md`); seeded failure → pytest rc=1. **Missing: a CI run on GitHub; Docker Compose not run** | Cannot be DONE until CI has run (R-009). Includes `.env.example` (placeholders only) |
 | ASG-005 | Implement tenant/company/branch creation | P1 | NOT STARTED | ASG-001, ASG-002, ASG-004 | Tenant→company→branch creatable via API; scope persisted; audit event recorded; tests: success/denial/invalid | — | |

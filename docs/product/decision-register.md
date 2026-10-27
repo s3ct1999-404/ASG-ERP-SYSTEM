@@ -25,6 +25,11 @@ Status: `OPEN` · `DECIDED` · `DEFERRED (assumption)`.
 | D-017 | Languages, accessibility, support and training expectations | UX/test scope | Stage 9 | OPEN | Product owner | Stage 6 |
 | D-018 | Commit/push workflow: who commits, branch naming, PR/review policy, permission for the agent to commit | Repository safety | — | DECIDED (partially): agent may commit **locally to feature branches only**; never to `main`; **never push**. PR/review policy still undefined | Product owner | PR policy before first push |
 | D-019 | Issue tracker choice (GitHub Issues vs other) and GitHub MCP access level | Avoid scattering tasks | ASG-017 | OPEN | Product owner | Stage 2 |
+| D-020 | Can one person (one login/email) hold memberships in several tenants? | User/Membership model, support and privacy | ADR-0003 acceptance, ASG-006 | OPEN (ADR-0003 proposes yes: global User + per-tenant Membership) | Product owner | Before ASG-006 |
+| D-021 | May platform operators ever access tenant business data (support access)? Under what controls (time-limit, tenant consent, audit)? | Privacy/legal, operator tooling | ADR-0003 acceptance | OPEN (default proposed: **no access**) | Product owner + legal reviewer | Before ASG-006 |
+| D-022 | Who may assign tenant-wide (all companies/branches) grants? | Privilege escalation control | ASG-006 | OPEN | Product owner | Before ASG-006 |
+| D-023 | Are app entitlements granted per tenant, per company, or both? | Licensing/billing model | AppEntitlement design, Stage 7 | OPEN (relates to D-004) | Product owner | Before Stage 7 |
+| D-024 | Tenant-data isolation approach: shared schema + RLS (A), schema-per-tenant (B), database-per-tenant (C) | Security, ops cost, migrations | ASG-005, ASG-006 | OPEN (ADR-0003 recommends A, conditional on A-002/A-003) | Product owner | Before ASG-005 |
 
 ## Tracked assumptions
 A-001 (team skills), A-002 (cloud-hosted, containerised), A-003 (modest pilot scale) — defined in `docs/adr/0002-technology-stack.md`. Add rows here (with owner and due milestone) before relying on any further deferral.
