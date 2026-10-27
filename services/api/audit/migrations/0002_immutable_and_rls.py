@@ -8,7 +8,7 @@ TRIGGER = """
 CREATE OR REPLACE FUNCTION audit_event_immutable() RETURNS trigger AS $$
 BEGIN
   RAISE EXCEPTION 'audit_event is append-only';
-END $$ LANGUAGE plpgsql;
+END $$ LANGUAGE plpgsql SET search_path = public;
 DROP TRIGGER IF EXISTS audit_event_no_update ON audit_auditevent;
 CREATE TRIGGER audit_event_no_update BEFORE UPDATE OR DELETE ON audit_auditevent
   FOR EACH ROW EXECUTE FUNCTION audit_event_immutable();

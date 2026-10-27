@@ -78,3 +78,23 @@ def test_audit_isolated_per_tenant(world_a: World, world_b: World) -> None:
     record(action="only.b", tenant_id=world_b.tenant.id)
     with tenant_mode(world_a.tenant.id):
         assert not AuditEvent.objects.filter(action="only.b").exists()
+
+
+def test_identity_tables_have_rls_and_app_role_sees_only_current_tenant_members(
+    world_a: World, world_b: World
+) -> None:
+    with connection.cursor() as cur:
+        cur.execute(
+            "SELECT relname, relrowsecurity FROM pg_class WHERE relname IN "
+            "('identity_user','identity_authtoken','tenancy_company','audit_auditevent')"
+        )
+        assert all(enabled for _, enabled in cur.fetchall())
+    with tenant_mode(world_a.tenant.id), connection.cursor() as cur:
+        cur.execute("SELECT email FROM identity_user")
+        assert [r[0] for r in cur.fetchall()] == [world_a.owner.email]
+    with (
+        pytest.raises(ProgrammingError),
+        tenant_mode(world_a.tenant.id),
+        connection.cursor() as cur,
+    ):
+        cur.execute("SELECT key_hash FROM identity_authtoken")

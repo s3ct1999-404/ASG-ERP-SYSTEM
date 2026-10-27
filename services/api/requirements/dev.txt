@@ -31,3 +31,5 @@ sqlparse==0.6.0
 types-PyYAML==6.0.12.20260906
 typing_extensions==4.16.0
 uritemplate==4.2.0
+argon2-cffi==25.1.0
+argon2-cffi-bindings==26.1.0

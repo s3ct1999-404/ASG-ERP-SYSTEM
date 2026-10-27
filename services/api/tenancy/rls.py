@@ -13,7 +13,27 @@ BEGIN
 END $$;
 GRANT {APP_ROLE} TO CURRENT_USER;
 GRANT USAGE ON SCHEMA public TO {APP_ROLE};
+-- Supabase auto-grants new tables to its REST roles; this service never uses them.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated;
+  END IF;
+END $$;
 """
+
+
+def revoke_rest_roles_sql(table: str) -> str:
+    return f"""
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    REVOKE ALL ON TABLE {table} FROM anon, authenticated;
+  END IF;
+END $$;
+"""
+
 
 _TENANT_EXPR = "nullif(current_setting('app.tenant_id', true), '')::uuid"
 
@@ -27,7 +47,7 @@ DROP POLICY IF EXISTS tenant_isolation ON {table};
 CREATE POLICY tenant_isolation ON {table}
   USING ({column} = {_TENANT_EXPR}) WITH CHECK ({column} = {_TENANT_EXPR});
 GRANT {grants} ON {table} TO {APP_ROLE};
-"""
+{revoke_rest_roles_sql(table)}"""
 
 
 def disable_rls_sql(table: str) -> str:
