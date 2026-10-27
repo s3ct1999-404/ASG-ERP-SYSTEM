@@ -9,13 +9,13 @@
 | Field | Value |
 |---|---|
 | Last updated | 2026-10-26 |
-| Current stage | Stage 2 — Engineering foundation (scaffold built; gate not yet met) |
-| Active task | ASG-004 (IN REVIEW) — see `CURRENT_SPRINT.md`. ASG-003 also IN REVIEW (owner content review pending) |
-| Overall status | **Stack accepted (ADR-0002). Engineering scaffold built and verified locally (API 12 tests, web 4 tests, lint/type/build). CI defined but never run on GitHub. No business-domain code, models or migrations exist.** |
+| Current stage | Stage 1/2 — architecture decisions drafted and awaiting owner approval; engineering scaffold built (gate not yet met) |
+| Active task | ASG-015 (IN PROGRESS, research) — see `CURRENT_SPRINT.md`. IN REVIEW: ASG-002, -003, -004, -014. BLOCKED: ASG-012 |
+| Overall status | **Stack accepted (ADR-0002). Scaffold built and verified locally; CI defined but never run on GitHub. Tenancy ADR-0003, app/offline contracts and Uganda research drafted — all awaiting owner decisions/review. No business-domain code, models or migrations exist, deliberately: the next implementation tasks (ASG-005…) need ADR-0003 accepted first.** |
 | Base commit (remote `main`) | `7ff17b7` |
-| Working branch | `feat/asg-004-engineering-foundation` (local only, stacked on `chore/bootstrap-foundation`; **never pushed**) |
+| Working branch | `docs/asg-015-uganda-research` (local only; top of a linear stack of 5 branches — see `NEXT_SESSION.md`; **never pushed**) |
 | Last verified against repo | 2026-10-26 (fresh clone of `s3ct1999-404/ASG-ERP-SYSTEM`; scaffold re-verified in a second clean clone of the local branch) |
-| Next exact task | See `NEXT_SESSION.md` |
+| Next exact task | Owner decisions D-024 (+D-020…D-023, D-005, D-016, D-018) and review; then ASG-005 (see `NEXT_SESSION.md`) |
 
 ### Evidence-based summary
 - Remote repo contained only a title-only `README.md`; the Blueprint was added in `e54e53a` and deleted in `7ff17b7`. It is restored here at `docs/ASG_ERP_MASTER_BLUEPRINT.md` (owner to confirm the deletion was not intentional — see decision D-016).
@@ -39,8 +39,8 @@ Gates are defined in the Blueprint §15. A stage is complete only when its gate 
 - [x] Stack ADR (`docs/adr/0002-technology-stack.md`) — **Accepted 2026-10-26** (backend/web/monorepo); mobile/desktop and tenancy-data approach deliberately deferred
 - [x] Stack/workspace decision accepted by owner
 - [~] Tenant/company/branch scope model (ADR-0003 **Proposed** + data dictionary drafted) — ASG-002; awaiting owner
-- [ ] Offline support matrix — ASG-012
-- [ ] App manifest/lifecycle design — ASG-014
+- [~] Offline support matrix — ASG-012: statuses/transitions/retry drafted; **action matrix blocked on D-005**
+- [~] App manifest/lifecycle design — ASG-014: drafted as tested contracts; awaiting owner review
 - [ ] Threat-model outline
 - [ ] **Gate:** no critical ambiguity in tenancy, ledger, sync, app lifecycle
 
@@ -153,3 +153,4 @@ Authoritative list: `docs/product/decision-register.md`. Decisions still blockin
 | 2026-10-27 | ASG-004 follow-up: CI actions pinned to SHAs; `scripts/check_secrets.py` + 6 self-tests + CI job added (R-010 partially mitigated). | Agent |
 | 2026-10-27 | ASG-002 drafted (ADR-0003 Proposed); ASG-014 drafted; ASG-012 partially drafted (blocked on D-005). Fixed scanner self-flagging bug before it reached CI. | Agent |
 | 2026-10-27 | ASG-015 first research pass (5 records, conflicts logged); D-001/D-005/D-011/D-014 annotated; CUS-001/TAX-001 added as pending-review requirements. | Agent |
+| 2026-10-27 | End-of-session handoff: CI scanner self-flagging bug fixed; branches stacked; final verification recorded in `NEXT_SESSION.md`. | Agent |
