@@ -20,11 +20,14 @@ def test_detects_github_token_shape() -> None:
 
 
 def test_detects_private_key_block() -> None:
-    assert "Private key block" in labels("-----BEGIN RSA PRIVATE KEY-----")
+    marker = "-----BEGIN " + "RSA PRIVATE" + " KEY-----"  # assembled at runtime
+    assert "Private key block" in labels(marker)
 
 
 def test_detects_quoted_credential_assignment() -> None:
-    assert "Quoted credential assignment" in labels('DB_PASSWORD = "Xk29sLq0PzT7vRw1"')
+    value = "Xk29sLq0" + "PzT7vRw1"  # synthetic
+    line = "DB_PASSWORD = " + chr(34) + value + chr(34)
+    assert "Quoted credential assignment" in labels(line)
 
 
 def test_ignores_placeholders_and_env_lookups() -> None:
