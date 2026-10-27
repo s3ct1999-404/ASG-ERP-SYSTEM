@@ -40,6 +40,8 @@ Priority: P0 foundational/blocking · P1 core · P2 later. Status values as in `
 | TPL-001 | Templates are versioned config packages; preview before apply; no silent data destruction | P2 | §9 | Stage 7 | Preview + non-destructive-apply tests |
 | CMP-001 | Uganda compliance records with official source, date, category, impact, evidence, open questions | P1 | §8 | ASG-015 | Records complete; sources official |
 | CMP-002 | No compliance claim without verification evidence | P0 | §7.6, §8 | — | Review checklist |
+| CUS-001 | Customer/supplier records can hold BRN, NIN and TIN identifiers (URA's Aug 2026 notice says EFRIS documents must carry the buyer's identifier). **PENDING compliance review** — do not finalise the data contract until EF-004 is reviewed | P1 | `docs/compliance/uganda/efris-requirements.md` EF-004 | ASG-007, ASG-015 | Data contract lists identifier fields, validation rules per reviewed source |
+| TAX-001 | Tax rates, thresholds, exemptions and sector rules are effective-dated configuration applied by tax-point date, never code constants. **Strengthened by evidence:** Uganda's FY2026/27 amendments changed tax rules on 1 July 2026, with conflicting reports on their status | P0 | §6.1, §8; TX-001/TX-002 | ASG-015, D-008 | No tax literal in code (scanner/test); config has effective dates; a document uses the config effective at its tax point |
 | NFR-001 | Critical user journeys pass e2e tests | P1 | §2.3 | Stage 4 | e2e results |
 | NFR-002 | No cross-tenant exposure in automated security tests | P0 | §2.3 | TEN-002 | Security suite passes |
 | NFR-003 | Migrations apply and roll forward in test env | P1 | §2.3 | ASG-004 | CI migration check |
