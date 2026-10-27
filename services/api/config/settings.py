@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "inventory",
     "accounting",
     "sales",
+    "fiscal",
 ]
 
 # Custom user model, fixed BEFORE the first migration (ADR-0004). django.contrib.auth is

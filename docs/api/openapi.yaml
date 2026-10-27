@@ -266,6 +266,109 @@ paths:
               schema:
                 $ref: '#/components/schemas/Company'
           description: ''
+  /api/v1/fiscal/documents/:
+    get:
+      operationId: fiscal_documents_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - fiscal
+      responses:
+        '200':
+          description: No response body
+  /api/v1/fiscal/documents/{doc_id}/reconcile/:
+    post:
+      operationId: fiscal_documents_reconcile_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      parameters:
+      - in: path
+        name: doc_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - fiscal
+      responses:
+        '200':
+          description: No response body
+  /api/v1/fiscal/documents/{doc_id}/submit/:
+    post:
+      operationId: fiscal_documents_submit_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      parameters:
+      - in: path
+        name: doc_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - fiscal
+      responses:
+        '200':
+          description: No response body
+  /api/v1/fiscal/settings/:
+    get:
+      operationId: fiscal_settings_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - fiscal
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: fiscal_settings_update
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - fiscal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SettingsIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SettingsIn'
+        required: true
+      responses:
+        '200':
+          description: No response body
+  /api/v1/fiscal/status/:
+    get:
+      operationId: fiscal_status_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - fiscal
+      responses:
+        '200':
+          description: No response body
   /api/v1/health/live/:
     get:
       operationId: health_live_retrieve
@@ -949,6 +1052,16 @@ components:
       required:
       - id
       - name
+    EnvironmentEnum:
+      enum:
+      - simulated
+      - sandbox
+      - production
+      type: string
+      description: |-
+        * `simulated` - simulated
+        * `sandbox` - sandbox
+        * `production` - production
     Health:
       type: object
       properties:
@@ -1244,6 +1357,14 @@ components:
       - name
       - sku
       - uom
+    ProviderEnum:
+      enum:
+      - simulator
+      - ura_s2s
+      type: string
+      description: |-
+        * `simulator` - simulator
+        * `ura_s2s` - ura_s2s
     ProvisionTenant:
       type: object
       properties:
@@ -1320,6 +1441,27 @@ components:
       - id
       - is_system
       - name
+    SettingsIn:
+      type: object
+      properties:
+        company:
+          type: string
+          format: uuid
+        enabled:
+          type: boolean
+        provider:
+          $ref: '#/components/schemas/ProviderEnum'
+        environment:
+          $ref: '#/components/schemas/EnvironmentEnum'
+        offline_window_hours:
+          type: integer
+          minimum: 1
+          nullable: true
+      required:
+      - company
+      - enabled
+      - environment
+      - provider
     TaxCode:
       type: object
       properties:
