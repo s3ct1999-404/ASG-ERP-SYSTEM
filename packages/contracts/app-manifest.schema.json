@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asg-erp.invalid/schemas/app-manifest/v0.json",
+  "title": "ASG ERP app manifest (DRAFT v0 - ASG-014, unapproved)",
+  "description": "Structural contract only. Semantic checks (dependency cycles, unique permission codes, signature verification, compatibility resolution) belong to the registry implementation. There is deliberately NO code entry-point field: the third-party execution model is undecided (D-015) and needs a threat model first.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "id", "name", "version", "publisher", "compatibility"],
+  "properties": {
+    "manifest_version": { "const": 0 },
+    "id": {
+      "description": "Stable, never-reused identifier (reverse-DNS style).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$",
+      "maxLength": 128
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "description": { "type": "string", "maxLength": 1000 },
+    "version": {
+      "description": "Semantic version of this app release.",
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-[0-9A-Za-z.-]+)?$"
+    },
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,62}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform_min"],
+      "properties": {
+        "platform_min": { "$ref": "#/$defs/semver" },
+        "platform_max": { "$ref": "#/$defs/semver" }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version_range"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$" },
+          "version_range": { "type": "string", "minLength": 1, "maxLength": 64 }
+        }
+      }
+    },
+    "permissions": {
+      "description": "Permission codes this app registers. Least privilege; reviewed at install and re-approved on upgrade if new codes appear.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "description"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$", "maxLength": 128 },
+          "description": { "type": "string", "minLength": 1, "maxLength": 300 }
+        }
+      }
+    },
+    "configuration_schema": {
+      "description": "JSON Schema (as an object) describing tenant/company configuration for this app.",
+      "type": "object"
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "reversible"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "description": { "type": "string", "maxLength": 300 },
+          "reversible": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "semver": { "type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$" }
+  }
+}

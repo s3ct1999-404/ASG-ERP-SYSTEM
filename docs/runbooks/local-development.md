@@ -58,7 +58,7 @@ npm audit                                    # visibility only (see PROGRESS.md 
 Repo-level (from the repository root, API venv active):
 ```bash
 python scripts/check_secrets.py                          # secret scan of tracked files
-python -m pytest tests/security -p no:django -q          # scanner self-tests
+python -m pytest tests/security tests/contracts -p no:django -q   # scanner + contract self-tests
 ruff check --config services/api/pyproject.toml scripts tests
 ```
 
@@ -70,7 +70,7 @@ cd services/api && python manage.py spectacular --validate --file ../../docs/api
 Review the diff as an API contract change.
 
 ## Dependencies
-- API: edit `services/api/requirements/base.in`, rebuild the pins in a clean venv (`pip freeze`), update `base.txt`/`dev.txt`, run all checks. Django stays on the 5.2 LTS line until an ADR/task changes it.
+- API: edit `services/api/requirements/base.in` (runtime) or `dev.in` (tools), rebuild the pins in a clean venv (`pip freeze`), update `base.txt`/`dev.txt`, run all checks. Django stays on the 5.2 LTS line until an ADR/task changes it.
 - Web: `npm install --save-exact`; prefer releases at least 14 days old (`--before=<date>`); commit `package-lock.json`.
 
 ## Troubleshooting

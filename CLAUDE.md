@@ -43,7 +43,7 @@ Stack: Django + DRF + PostgreSQL (`services/api`), React + TypeScript (`apps/web
 - API (`cd services/api`, venv active, `.env` exported, PostgreSQL running): `ruff check .` · `ruff format --check .` · `mypy .` · `python manage.py makemigrations --check --dry-run` · `python -m pytest`
 - Web (`cd apps/web`): `npm run lint` · `npm run format:check` · `npm run typecheck` · `npm test` · `npm run build`
 - Dependency audits: `pip-audit -r requirements/dev.txt --no-deps --disable-pip` · `npm audit --omit=dev --audit-level=high`
-- Secret scan: `python scripts/check_secrets.py` (self-tests: `python -m pytest tests/security -p no:django -q`)
+- Secret scan: `python scripts/check_secrets.py` (self-tests: `python -m pytest tests/security tests/contracts -p no:django -q`)
 - OpenAPI contract (`docs/api/openapi.yaml`) must match the code; a test enforces it.
 Report each as PASS/FAIL/NOT RUN/BLOCKED. CI (`.github/workflows/ci.yml`) has **never run on GitHub** until a result is recorded in `PROGRESS.md`.
 Do not add `django.contrib.auth` or any tenant-scoped model before the identity design and tenancy ADR (ASG-002/ASG-006).

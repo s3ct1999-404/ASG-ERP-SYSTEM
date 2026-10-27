@@ -47,6 +47,9 @@ jobs:
       - name: Lint repo-level scripts and security tests
         working-directory: .
         run: ruff check --config services/api/pyproject.toml scripts tests && ruff format --check --config services/api/pyproject.toml scripts tests
+      - name: Contract definition tests (manifest schema, state machines)
+        working-directory: .
+        run: python -m pytest tests/contracts -p no:django -q
       - run: python manage.py makemigrations --check --dry-run
       - run: python -m pytest
       - name: Dependency vulnerability audit
