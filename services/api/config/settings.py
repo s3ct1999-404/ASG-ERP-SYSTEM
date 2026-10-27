@@ -46,7 +46,19 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "core",
+    "identity",
+    "tenancy",
+    "audit",
 ]
+
+# Custom user model, fixed BEFORE the first migration (ADR-0004). django.contrib.auth is
+# deliberately NOT installed: authorisation is our own tenant-scoped RBAC (tenancy app).
+AUTH_USER_MODEL = "identity.User"
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = []
 
 MIDDLEWARE = [
     "config.middleware.RequestIdMiddleware",
@@ -67,7 +79,16 @@ DATABASES = {
         "PASSWORD": os.environ.get("DB_PASSWORD", ""),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
+        "ATOMIC_REQUESTS": True,
+        "OPTIONS": {"sslmode": os.environ.get("DB_SSLMODE", "prefer")},
     }
+}
+# Durable audit connection: same database, autocommit, NOT wrapped in the request transaction,
+# so denial/failure events survive the rollback that DRF performs on 4xx/5xx responses.
+DATABASES["audit"] = {
+    **DATABASES["default"],
+    "ATOMIC_REQUESTS": False,
+    "TEST": {"MIRROR": "default"},
 }
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -89,8 +110,11 @@ X_FRAME_OPTIONS = "DENY"
 REST_FRAMEWORK = {
     # No authentication scheme exists yet (ASG-006). With no authenticators and
     # UNAUTHENTICATED_USER=None, request.user is None, so IsAuthenticated denies.
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["identity.authentication.BearerTokenAuthentication"],
     "UNAUTHENTICATED_USER": None,
+    "EXCEPTION_HANDLER": "core.exceptions.api_exception_handler",
+    "DEFAULT_THROTTLE_CLASSES": [],
+    "DEFAULT_THROTTLE_RATES": {"login": os.environ.get("LOGIN_THROTTLE", "10/min")},
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

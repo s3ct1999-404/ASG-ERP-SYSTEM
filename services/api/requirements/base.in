@@ -4,3 +4,4 @@ Django>=5.2,<5.3
 djangorestframework
 drf-spectacular
 psycopg[binary]
+argon2-cffi

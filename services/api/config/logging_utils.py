@@ -33,3 +33,8 @@ class JsonFormatter(logging.Formatter):
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
         return json.dumps(payload, default=str)
+
+
+def current_request_id() -> str | None:
+    value = request_id_var.get()
+    return None if value == "-" else value
