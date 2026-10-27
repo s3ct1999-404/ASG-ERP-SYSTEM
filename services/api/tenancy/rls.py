@@ -56,3 +56,36 @@ DROP POLICY IF EXISTS tenant_isolation ON {table};
 ALTER TABLE {table} DISABLE ROW LEVEL SECURITY;
 REVOKE ALL ON {table} FROM {APP_ROLE};
 """
+
+
+def immutable_sql(table: str) -> str:
+    """Reject UPDATE/DELETE/TRUNCATE on ``table`` for every role (append-only ledgers)."""
+    return f"""
+CREATE OR REPLACE FUNCTION asg_immutable() RETURNS trigger AS $$
+BEGIN
+  RAISE EXCEPTION '% is append-only', TG_TABLE_NAME;
+END $$ LANGUAGE plpgsql SET search_path = public;
+DROP TRIGGER IF EXISTS {table}_immutable ON {table};
+CREATE TRIGGER {table}_immutable BEFORE UPDATE OR DELETE ON {table}
+  FOR EACH ROW EXECUTE FUNCTION asg_immutable();
+DROP TRIGGER IF EXISTS {table}_no_truncate ON {table};
+CREATE TRIGGER {table}_no_truncate BEFORE TRUNCATE ON {table}
+  FOR EACH STATEMENT EXECUTE FUNCTION asg_immutable();
+"""
+
+
+BALANCE_TRIGGER_SQL = """
+CREATE OR REPLACE FUNCTION asg_journal_balanced() RETURNS trigger AS $$
+DECLARE diff numeric;
+BEGIN
+  SELECT coalesce(sum(debit),0) - coalesce(sum(credit),0) INTO diff
+    FROM accounting_journalline WHERE entry_id = NEW.entry_id;
+  IF diff <> 0 THEN
+    RAISE EXCEPTION 'journal entry % is unbalanced by %', NEW.entry_id, diff;
+  END IF;
+  RETURN NULL;
+END $$ LANGUAGE plpgsql SET search_path = public;
+DROP TRIGGER IF EXISTS journalline_balanced ON accounting_journalline;
+CREATE CONSTRAINT TRIGGER journalline_balanced AFTER INSERT ON accounting_journalline
+  DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION asg_journal_balanced();
+"""

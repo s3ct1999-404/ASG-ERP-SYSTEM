@@ -4,6 +4,138 @@ info:
   version: 0.1.0
   description: 'Versioned REST API for ASG ERP. Contract-first: see docs/api/openapi.yaml.'
 paths:
+  /api/v1/accounting/{company_id}/{report}/:
+    get:
+      operationId: accounting_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      parameters:
+      - in: path
+        name: company_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: report
+        schema:
+          type: string
+        required: true
+      tags:
+      - accounting
+      responses:
+        '200':
+          description: No response body
+  /api/v1/accounting/accounts/:
+    get:
+      operationId: accounting_accounts_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - accounting
+      responses:
+        '200':
+          description: No response body
+  /api/v1/accounting/journals/:
+    get:
+      operationId: accounting_journals_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - accounting
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: accounting_journals_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - accounting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JournalIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JournalIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JournalIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+  /api/v1/accounting/journals/{entry_id}/reverse/:
+    post:
+      operationId: accounting_journals_reverse_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      parameters:
+      - in: path
+        name: entry_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - accounting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReverseIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReverseIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReverseIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+  /api/v1/accounting/periods/:
+    post:
+      operationId: accounting_periods_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - accounting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeriodIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PeriodIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PeriodIn'
+        required: true
+      responses:
+        '200':
+          description: No response body
   /api/v1/auth/login/:
     post:
       operationId: auth_login_create
@@ -172,6 +304,86 @@ paths:
               schema:
                 $ref: '#/components/schemas/Health'
           description: ''
+  /api/v1/inventory/adjustments/:
+    post:
+      operationId: inventory_adjustments_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - inventory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdjustIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdjustIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+        '200':
+          description: No response body
+  /api/v1/inventory/movements/:
+    get:
+      operationId: inventory_movements_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - inventory
+      responses:
+        '200':
+          description: No response body
+  /api/v1/inventory/receipts/:
+    post:
+      operationId: inventory_receipts_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - inventory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+        '200':
+          description: No response body
+  /api/v1/inventory/stock/:
+    get:
+      operationId: inventory_stock_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - inventory
+      responses:
+        '200':
+          description: No response body
   /api/v1/me/:
     get:
       operationId: me_retrieve
@@ -269,6 +481,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/Assignment'
           description: ''
+  /api/v1/partners/:
+    get:
+      operationId: partners_retrieve
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - partners
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+    post:
+      operationId: partners_create
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - partners
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Partner'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Partner'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Partner'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
   /api/v1/permissions/:
     get:
       operationId: permissions_retrieve
@@ -308,6 +561,74 @@ paths:
       responses:
         '201':
           description: No response body
+  /api/v1/pos/sales/:
+    post:
+      operationId: pos_sales_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - pos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PosSaleIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PosSaleIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PosSaleIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+        '200':
+          description: No response body
+  /api/v1/products/:
+    get:
+      operationId: products_retrieve
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - products
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    post:
+      operationId: products_create
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
   /api/v1/roles/:
     get:
       operationId: roles_list
@@ -355,6 +676,161 @@ paths:
               schema:
                 $ref: '#/components/schemas/Role'
           description: ''
+  /api/v1/sales/invoices/:
+    get:
+      operationId: sales_invoices_retrieve
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - sales
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: sales_invoices_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      tags:
+      - sales
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InvoiceIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InvoiceIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+        '200':
+          description: No response body
+  /api/v1/sales/invoices/{invoice_id}/payments/:
+    post:
+      operationId: sales_invoices_payments_create
+      description: |-
+        Subclasses MUST declare ``permission_map`` (HTTP method -> permission code).
+
+        A method with no entry is denied. Object-level scope checks are the view/service's job via
+        ``request.access`` (see ``tenancy.context.AccessContext``).
+      parameters:
+      - in: path
+        name: invoice_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sales
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentIn'
+        required: true
+      responses:
+        '201':
+          description: No response body
+        '200':
+          description: No response body
+  /api/v1/tax-codes/:
+    get:
+      operationId: tax_codes_retrieve
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - tax-codes
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxCode'
+          description: ''
+    post:
+      operationId: tax_codes_create
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - tax-codes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxCode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TaxCode'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TaxCode'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxCode'
+          description: ''
+  /api/v1/warehouses/:
+    get:
+      operationId: warehouses_retrieve
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - warehouses
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+          description: ''
+    post:
+      operationId: warehouses_create
+      description: |-
+        GET lists rows visible under ``read_perm`` (company scope); POST requires ``write_perm``
+        for the target company. Subclasses set model, serializer_class, perms and audit_name.
+      tags:
+      - warehouses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Warehouse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Warehouse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Warehouse'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+          description: ''
 components:
   schemas:
     AddMember:
@@ -373,6 +849,31 @@ components:
       required:
       - email
       - initial_password
+    AdjustIn:
+      type: object
+      properties:
+        warehouse:
+          type: string
+          format: uuid
+        product:
+          type: string
+          format: uuid
+        qty_delta:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,4})?$
+        reason:
+          type: string
+          maxLength: 200
+        idempotency_key:
+          type: string
+          maxLength: 100
+      required:
+      - idempotency_key
+      - product
+      - qty_delta
+      - reason
+      - warehouse
     Assignment:
       type: object
       properties:
@@ -452,9 +953,84 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/HealthStatusEnum'
       required:
       - status
+    HealthStatusEnum:
+      enum:
+      - ok
+      - unavailable
+      type: string
+      description: |-
+        * `ok` - ok
+        * `unavailable` - unavailable
+    InvoiceIn:
+      type: object
+      properties:
+        branch:
+          type: string
+          format: uuid
+        warehouse:
+          type: string
+          format: uuid
+        customer:
+          type: string
+          format: uuid
+          nullable: true
+        operation_id:
+          type: string
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineIn'
+      required:
+      - branch
+      - lines
+      - operation_id
+      - warehouse
+    JournalIn:
+      type: object
+      properties:
+        company:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        memo:
+          type: string
+          maxLength: 300
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineIn'
+      required:
+      - company
+      - date
+      - lines
+      - memo
+    LineIn:
+      type: object
+      properties:
+        account:
+          type: string
+          format: uuid
+        debit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          default: '0.00'
+        credit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          default: '0.00'
+      required:
+      - account
     LoginRequest:
       type: object
       properties:
@@ -505,6 +1081,95 @@ components:
       required:
       - email
       - id
+    MethodEnum:
+      enum:
+      - cash
+      - mobile_money
+      - card
+      - bank_transfer
+      type: string
+      description: |-
+        * `cash` - cash
+        * `mobile_money` - mobile_money
+        * `card` - card
+        * `bank_transfer` - bank_transfer
+    Partner:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        company:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          maxLength: 10
+        name:
+          type: string
+          maxLength: 200
+        tin:
+          type: string
+          maxLength: 20
+        nin_or_brn:
+          type: string
+          maxLength: 30
+        phone:
+          type: string
+          maxLength: 30
+        is_active:
+          type: boolean
+      required:
+      - company
+      - id
+      - kind
+      - name
+    PaymentIn:
+      type: object
+      properties:
+        method:
+          $ref: '#/components/schemas/MethodEnum'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        idempotency_key:
+          type: string
+          maxLength: 100
+      required:
+      - amount
+      - idempotency_key
+      - method
+    PeriodIn:
+      type: object
+      properties:
+        company:
+          type: string
+          format: uuid
+        year:
+          type: integer
+          maximum: 2100
+          minimum: 2000
+        month:
+          type: integer
+          maximum: 12
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/PeriodInStatusEnum'
+      required:
+      - company
+      - month
+      - status
+      - year
+    PeriodInStatusEnum:
+      enum:
+      - open
+      - closed
+      type: string
+      description: |-
+        * `open` - open
+        * `closed` - closed
     PermCatalog:
       type: object
       properties:
@@ -513,6 +1178,72 @@ components:
           additionalProperties: {}
       required:
       - permissions
+    PosSaleIn:
+      type: object
+      properties:
+        branch:
+          type: string
+          format: uuid
+        warehouse:
+          type: string
+          format: uuid
+        operation_id:
+          type: string
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineIn'
+        tenders:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenderIn'
+      required:
+      - branch
+      - lines
+      - operation_id
+      - tenders
+      - warehouse
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        company:
+          type: string
+          format: uuid
+        sku:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 200
+        uom:
+          type: string
+          format: uuid
+        tax_code:
+          type: string
+          format: uuid
+          nullable: true
+        sale_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        is_service:
+          type: boolean
+        is_active:
+          type: boolean
+      required:
+      - company
+      - id
+      - name
+      - sku
+      - uom
     ProvisionTenant:
       type: object
       properties:
@@ -534,6 +1265,43 @@ components:
       - owner_email
       - owner_password
       - slug
+    ReceiptIn:
+      type: object
+      properties:
+        warehouse:
+          type: string
+          format: uuid
+        product:
+          type: string
+          format: uuid
+        qty:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,4})?$
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,4})?$
+        idempotency_key:
+          type: string
+          maxLength: 100
+      required:
+      - idempotency_key
+      - product
+      - qty
+      - unit_cost
+      - warehouse
+    ReverseIn:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        reason:
+          type: string
+          maxLength: 200
+      required:
+      - reason
     Role:
       type: object
       properties:
@@ -552,11 +1320,75 @@ components:
       - id
       - is_system
       - name
-    StatusEnum:
-      enum:
-      - ok
-      - unavailable
-      type: string
-      description: |-
-        * `ok` - ok
-        * `unavailable` - unavailable
+    TaxCode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        company:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,4})?$
+        is_exempt:
+          type: boolean
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          type: string
+          format: date
+          nullable: true
+        source_note:
+          type: string
+          maxLength: 300
+      required:
+      - company
+      - effective_from
+      - id
+      - name
+      - rate
+    TenderIn:
+      type: object
+      properties:
+        method:
+          $ref: '#/components/schemas/MethodEnum'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+      required:
+      - amount
+      - method
+    Warehouse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        company:
+          type: string
+          format: uuid
+        branch:
+          type: string
+          format: uuid
+        code:
+          type: string
+          maxLength: 20
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - branch
+      - code
+      - company
+      - id
+      - name

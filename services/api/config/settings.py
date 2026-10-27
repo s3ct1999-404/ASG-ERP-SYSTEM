@@ -49,6 +49,10 @@ INSTALLED_APPS = [
     "identity",
     "tenancy",
     "audit",
+    "masterdata",
+    "inventory",
+    "accounting",
+    "sales",
 ]
 
 # Custom user model, fixed BEFORE the first migration (ADR-0004). django.contrib.auth is

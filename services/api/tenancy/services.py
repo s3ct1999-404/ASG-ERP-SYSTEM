@@ -41,7 +41,17 @@ def provision_tenant(
         owner_email, owner_password
     )
     company = Company.objects.create(tenant=tenant, name=company_name)
-    Branch.objects.create(tenant=tenant, company=company, name=branch_name, code=branch_code)
+    branch = Branch.objects.create(
+        tenant=tenant, company=company, name=branch_name, code=branch_code
+    )
+    from accounting.services import seed_company_accounts  # local import: avoids a module cycle
+    from masterdata.models import UnitOfMeasure, Warehouse
+
+    seed_company_accounts(tenant.id, company)
+    UnitOfMeasure.objects.create(tenant=tenant, code="PCS", name="Pieces")
+    Warehouse.objects.create(
+        tenant=tenant, company=company, branch=branch, code="MAIN", name="Main store"
+    )
     m = Membership.objects.create(tenant=tenant, user=owner)
     RoleAssignment.objects.create(tenant=tenant, membership=m, role=roles["Owner"])
     record(
@@ -57,6 +67,9 @@ def provision_tenant(
 def create_company(ctx: AccessContext, *, name: str, **extra: Any) -> Company:
     ctx.require("tenancy.manage_org")  # creating a company is a tenant-wide act
     c = Company.objects.create(tenant_id=ctx.tenant_id, name=name, **extra)
+    from accounting.services import seed_company_accounts  # local import: avoids a module cycle
+
+    seed_company_accounts(ctx.tenant_id, c)
     record(
         action="company.create",
         tenant_id=ctx.tenant_id,
