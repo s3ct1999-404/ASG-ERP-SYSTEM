@@ -55,6 +55,13 @@ npm audit --omit=dev --audit-level=high      # blocking
 npm audit                                    # visibility only (see PROGRESS.md R-008)
 ```
 
+Repo-level (from the repository root, API venv active):
+```bash
+python scripts/check_secrets.py                          # secret scan of tracked files
+python -m pytest tests/security -p no:django -q          # scanner self-tests
+ruff check --config services/api/pyproject.toml scripts tests
+```
+
 ## API contract
 `docs/api/openapi.yaml` is generated and **must match the code** (a test enforces it). After changing endpoints:
 ```bash
