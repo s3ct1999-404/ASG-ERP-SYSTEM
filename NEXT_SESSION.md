@@ -1,83 +1,89 @@
 # ASG ERP — Next Session Handoff
 
 ## Last updated
-2026-10-26
+2026-10-27
 
 ## Start here (read in this order)
 1. `ASG_ERP_AGENT_INSTRUCTIONS.md`  2. `CLAUDE.md`  3. `PROGRESS.md`  4. `CURRENT_SPRINT.md`  5. this file  6. active requirement + relevant ADRs (`docs/adr/`)
-Then `git status`, `git log --oneline -8`, and **verify this handoff against the actual repo** before editing.
+Then `git status`, `git log --oneline -12`, and **verify this handoff against the actual repo** before editing. PostgreSQL must be running for API tests (it stops between sandbox steps — start it first).
 
 ## Current milestone
-Stage 2 — Repository and engineering foundation (scaffold built; gate not yet met because CI has not run)
+Stage 1/2: architecture decisions drafted; engineering scaffold built. **Business features are deliberately not started** — they are gated on owner decisions below.
 
 ## Current task
-ASG-004 — Set up local development and CI (**IN REVIEW**). ASG-003 (continuity docs) also **IN REVIEW** awaiting owner content review. ASG-001 is **DONE**.
+ASG-015 — Uganda compliance research (**IN PROGRESS**, first pass done). Status of everything else: `PROGRESS.md`. Summary: DONE: ASG-001 · IN REVIEW: ASG-002, ASG-003, ASG-004, ASG-014 · BLOCKED: ASG-012 · NOT STARTED: ASG-005…011, 013, 016, 017.
 
-## Current state
-- **Done:** ADR-0002 accepted (Django 5.2 LTS + DRF + PostgreSQL; React + TypeScript; monorepo). API scaffold, web shell, OpenAPI contract + drift test, pinned deps, CI workflow file, compose file, `.env.example`, runbook.
-- **Partial:** CI (defined, never run on GitHub); Docker Compose (never run).
-- **Not started:** ASG-002 (tenant/company/branch boundaries ADR + data dictionary) and everything after it; ADR-0003 (mobile/desktop); tenancy-isolation ADR; compliance research; skills/agents; secret-scanning job.
-- **Deliberately absent:** `django.contrib.auth`, any model, any migration, `apps/mobile`, `apps/desktop`. Do not add auth or tenant-scoped tables before ASG-002 / the tenancy ADR / ASG-006.
+## What exists (all on local branches, nothing pushed)
+Linear stack, each branch built on the previous (`main` @ `7ff17b7` is unchanged):
+1. `chore/bootstrap-foundation` — continuity docs, baseline docs, ADR-0001/0002 (accepted)
+2. `feat/asg-004-engineering-foundation` — Django 5.2 LTS API scaffold, React web shell, CI workflow (SHA-pinned), secret scanner + tests, compose, `.env.example`, runbook
+3. `docs/asg-002-tenancy-design` — ADR-0003 (**Proposed**) + data dictionary
+4. `docs/asg-012-014-contract-drafts` — `packages/contracts/` + tests
+5. `docs/asg-015-uganda-research` — compliance records (**unreviewed**) — **top of stack = the complete project**
+
+## What is deliberately NOT built, and why
+No tenants, users, auth, products, stock, sales, accounting, POS, HR or any model/migration. These cannot be built honestly yet:
+- **ASG-005/006 (tenancy, roles, RLS)** need ADR-0003 accepted (D-024; also D-020…D-023). Django's user model must be fixed before the first migration, so `django.contrib.auth` is not installed.
+- **ASG-008/010/011 (stock, ledger, first slice)** need D-007/D-008/D-009 (currency/rounding, accounting policy, costing and negative stock). Blueprint §6 forbids guessing these.
+- **ASG-012/013 (offline)** need D-005, and any fiscal-offline behaviour must follow EFRIS's *current* offline window (EF-006, unverified).
+- **Fiscalisation, tax rates, payroll** need verified, professionally reviewed rules (ASG-015, D-011, D-012).
 
 ## Decisions and assumptions
-- ADR-0001 accepted; ADR-0002 accepted (owner approval in session 2026-10-26).
-- Tracked assumptions (owner to confirm): **A-001** team skills unknown ("not sure yet"); **A-002** cloud-hosted + containerised; **A-003** modest pilot scale. Revisit A-001 before Stage 3.
-- D-018 (partly decided): agent may commit **locally to feature branches only**; never `main`; **never push**. PR/review policy undefined.
-- D-016 open: was deleting the Blueprint from `main` (`7ff17b7`) intentional?
-- Django deliberately kept on the 5.2 LTS line (6.1 exists).
+- Accepted: ADR-0001, ADR-0002 (Django + DRF + PostgreSQL; React + TypeScript; monorepo).
+- **Proposed, awaiting you:** ADR-0003 (tenancy; recommends shared schema + PostgreSQL Row-Level Security, conditional on A-002/A-003).
+- Tracked assumptions: A-001 team skills unknown · A-002 cloud-hosted + containerised · A-003 modest pilot scale.
+- D-018 (partial): agent commits locally to feature branches only; never `main`; never pushes. PR/review policy undefined.
 
-## Files changed this session
-See `git log`. Commits on local branches (identity `Claude (agent)`, repo-local config):
-- `a893af0` docs: bootstrap continuity system and baseline docs (ASG-003) — branch `chore/bootstrap-foundation`
-- `f2f5663` docs: accept ADR-0002, close ASG-001, start ASG-004 — same branch
-- `3e1403d` feat(platform): engineering foundation scaffold (ASG-004) — branch `feat/asg-004-engineering-foundation`
-- A final docs commit (this handoff + progress evidence) follows `3e1403d` on the feature branch.
+## Validation results (2026-10-27) — fresh clone of branch `docs/asg-015-uganda-research` at `b214e55`
+Environment: Python 3.12.3, Node 22.22.2, PostgreSQL 16.15 installed locally in the sandbox (not Docker). Exact commands: `docs/runbooks/local-development.md`.
 
-## Validation results (2026-10-26)
-Run in a **fresh clone** of the local feature branch (`/tmp/clean`), following `docs/runbooks/local-development.md`. Environment: Python 3.12.3, Node 22.22.2, PostgreSQL 16.15 installed locally in the sandbox (apt) — **not** Docker.
-
-| Check (exact command) | Result |
+| Check | Result |
 |---|---|
-| `ruff check .` | PASS |
-| `ruff format --check .` | PASS (19 files) |
-| `mypy .` (strict, django/drf plugins) | PASS (19 files) |
-| `python manage.py makemigrations --check --dry-run` | PASS (no changes; no models exist) |
-| `python -m pytest` (against PostgreSQL) | PASS — 12 passed |
-| `pip-audit -r requirements/dev.txt --no-deps --disable-pip` | PASS — no known vulnerabilities |
-| `npm ci` | PASS |
-| `npm run lint` / `format:check` / `typecheck` | PASS / PASS / PASS |
-| `npm test` (vitest) | PASS — 4 passed, no `act()` warnings |
-| `npm run build` | PASS |
-| `npm audit --omit=dev --audit-level=high` | PASS — 0 vulnerabilities (production deps) |
-| `npm audit` (full) | **FAIL (rc=1)** — 1 high advisory in dev-only `undici` via `jsdom` — known, tracked as **R-008**, fix on/after 2026-10-29 |
-| Live server: `/health/live/` 200; `/health/ready/` 200; unknown path 404; spoofed Host → 400; `X-Frame-Options: DENY` | PASS (observed with curl) |
-| Live server, PostgreSQL stopped: ready → 503 `{"status":"unavailable"}`, live → 200, recovery → 200; JSON ERROR log carries `request_id`; DB password absent from log | PASS (observed) |
-| Seeded failing test → `pytest` | rc=1 as intended (gate fails when it should); test removed afterwards |
-| `.github/workflows/ci.yml` | **NOT RUN** — YAML parses only; never executed on GitHub |
-| `docker-compose.yml` / `docker compose up -d db` | **NOT RUN** — Docker unavailable; YAML parses only |
-| Human review of content / owner sign-off | **NOT DONE** |
+| API: `ruff check` / `ruff format --check` / `mypy` (strict) | PASS / PASS / PASS |
+| API: `makemigrations --check --dry-run` | PASS (no models exist) |
+| API: `pytest` (12 tests, against PostgreSQL) | PASS (after starting PostgreSQL — the first run errored only because the database was down; confirmed, then re-run) |
+| Repo: `ruff` on `scripts`/`tests` (check + format) | PASS |
+| Repo: secret scan (`scripts/check_secrets.py`) | PASS — and verified to catch a planted secret (rc=1) |
+| Repo: `pytest tests/security tests/contracts` (21 tests) | PASS; 3 negative controls proved the contract tests fail on broken state machines |
+| `pip-audit` on pinned `dev.txt` | PASS — no known vulnerabilities |
+| Web: `npm ci`, lint, format, typecheck, test (4), build | PASS ×6 |
+| `npm audit --omit=dev --audit-level=high` (blocking in CI) | PASS — 0 vulnerabilities |
+| `npm audit` (full) | **FAIL (rc=1)** — 1 high advisory in dev-only `undici` via `jsdom` — known **R-008**; fix on/after 2026-10-29 |
+| Docs: links, 17 task statuses, D-/ASG- ID references, exactly one active task | PASS |
+| `.github/workflows/ci.yml` | YAML parses; **NOT RUN on GitHub** (R-009) |
+| `docker-compose.yml` | YAML parses; **NOT RUN** (no Docker) |
+| Compliance records, ADR-0003, contracts: correctness/approval | **NOT REVIEWED** by any human or professional |
 
-Not proven by these checks: behaviour on another OS/machine, CI services/caching, Docker image behaviour, security beyond the listed tests (`manage.py check --deploy` warnings remain by design — see R-010), and the correctness of the draft requirements.
+Not proven: behaviour on another machine, CI services/caching, Docker, security beyond the listed tests, correctness of drafted proposals, anything about Uganda law beyond what the records state with their evidence levels.
 
-Corrections made during the session (for transparency): an early statement that npm reported "0 vulnerabilities" was wrong — it was install output; the real audit showed R-008. A mypy-flagged unused `type: ignore`, three ruff findings, a missing clickjacking middleware (`check --deploy` W002) and a React `act()` warning were found and fixed.
+## Mistakes caught this session (transparency)
+- Earlier "0 vulnerabilities" claim was wrong (install output); corrected (R-008).
+- The secret scanner flagged its own test fixtures once tracked — the CI `secrets` job would have failed on first run. Reproduced, fixed at the source on the ASG-004 branch, branches restacked. Also fixed a word-boundary bug that missed `DB_PASSWORD = "…"`.
+- A dev-server crash with bad DB credentials briefly produced no test output; diagnosed (Django checks migrations at startup) and re-tested properly.
+- Research found my training knowledge stale: a URA notice of 10–11 Aug 2026 (post-cutoff) extends mandatory EFRIS to 12 sectors — now recorded from the primary source.
 
 ## Known defects and risks
-`PROGRESS.md` → R-002…R-010. Most relevant now: **R-008** (dev-only npm advisory, dated action), **R-009** (CI/Docker never run), **R-010** (deployment hardening, CSRF decision, rate limiting, secret scanning, action/image pinning deferred).
+`PROGRESS.md` R-002…R-010 plus: **R-011-equivalent** — compliance facts are time-sensitive and partially conflicting (tracked in R-006). Priority: EF-006 (accreditation requirement, offline window).
 
-## Blockers/questions for the owner
-1. Push policy and PR/review process (D-018) — needed to run CI on GitHub and close R-009/ASG-004.
-2. D-016 — Blueprint deletion intent.
-3. Confirm assumptions A-001/A-002/A-003, or answer D-002 (deployment) and D-013 (scale), which the tenancy ADR needs.
-4. Review ASG-003 docs and ASG-004 scaffold.
+## Questions for the owner (all in `docs/product/decision-register.md`)
+1. **D-024** approve/amend ADR-0003 (shared schema + RLS), and answer D-020 (one person in several tenants?), D-021 (operator support access?), D-022 (who assigns tenant-wide grants?), D-023 (entitlement per tenant or company?).
+2. **D-001** first customer segment/template — note: 12 URA-listed sectors have mandatory EFRIS regardless of VAT status.
+3. **D-005** which workflows must work offline in release 1.
+4. **D-007/D-008/D-009** currency/rounding, accounting policy, costing and negative stock (needs an accounting reviewer).
+5. **D-016** (was deleting the Blueprint intentional?), **D-018** (push/PR policy so CI can run), D-002/D-013 (confirm assumptions A-002/A-003).
 
 ## Exact next action
-**Owner:** review the two branches; decide how to publish them (e.g. push `feat/asg-004-engineering-foundation` and open a PR) so CI runs; answer D-016.
-**Next agent session (after CI result is known):** record the CI result in `PROGRESS.md`; if green, set ASG-004 (and, with owner sign-off, ASG-003) to DONE. Then start **ASG-002**: write the tenant/company/branch/permission boundary ADR and data dictionary (scope stated per entity, deny-by-default, scope-check points), **docs only — no models** — and surface D-002/D-004/D-013 for decision first. Do not begin ASG-005 until ASG-002 is approved. Also: on/after 2026-10-29 resolve R-008.
+**Owner:** (a) review the branches; publish the top branch or open a PR so CI runs (closes R-009); (b) answer D-024 and D-020…D-023; (c) pick D-001/D-005.
+**Next agent session (in order):**
+1. Record the first CI result in `PROGRESS.md`; on green set ASG-004 DONE.
+2. On acceptance of ADR-0003, set ASG-002 DONE; then **ASG-005** (tenant/company/branch creation) — start with the RLS spike to verify the ADR's claims, introduce the identity/user-model ADR, then implement with cross-tenant tests. Do **not** start before acceptance.
+3. Continue ASG-015 items 1–4 (read the FY2026/27 EFRIS handbook, resolve TX-002, read the DPPA text, research NSSF, obtain professional review).
+4. On/after 2026-10-29: resolve R-008 (`npm audit fix`, re-run web checks).
 
 ## Git state
-- Remote `origin` (read-only use): `https://github.com/s3ct1999-404/ASG-ERP-SYSTEM.git`, `main` @ `7ff17b7` — **unchanged by this work**
-- Local branches: `chore/bootstrap-foundation` (2 commits ahead of `main`); `feat/asg-004-engineering-foundation` (stacked: bootstrap + scaffold + handoff docs)
-- Nothing pushed. Working tree clean after the final docs commit.
+- Remote `origin` (read-only use): `main` @ `7ff17b7` — unchanged by this work.
+- Local top-of-stack branch: `docs/asg-015-uganda-research`. Working tree clean after the final commit.
+- Nothing pushed. Delivered as a zip of the final tree and a git bundle containing all branches.
 
 ## GitHub MCP actions actually performed
-None. No GitHub MCP was available; the repo was read via public `git ls-remote`/`git clone`.
+None (no GitHub MCP available). GitHub API unauthenticated access returned 403; action SHAs were resolved with plain `git ls-remote`/shallow clones of the official `actions/*` repositories.
