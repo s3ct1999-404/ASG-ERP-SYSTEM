@@ -11,7 +11,7 @@
 | Working branch | `feat/mvp-platform-core` (local; stacked on `docs/asg-015-uganda-research`) |
 | Last code commit | `b9aa5ce` (fiscal). Docs commit follows it; see `git log` |
 | Remote | `main` @ `7ff17b7`. **Nothing pushed**: no GitHub credential in the build sandbox (genuine human step) |
-| Supabase | project `hcpzsprnrhpfnodvzals`, Postgres 17. Applied: identity 0001-0002, tenancy 0001-0002, audit 0001-0002. **NOT yet applied**: masterdata, accounting, inventory, sales, fiscal (see NEXT_SESSION) |
+| Supabase | project `hcpzsprnrhpfnodvzals`, Postgres 17. Applied: identity 0001-0002, tenancy 0001-0002, audit 0001-0002. masterdata 0001-0002, accounting 0001-0002, inventory 0001-0003, sales 0001-0003, fiscal 0001-0002 applied 2026-10-28 and verified (see docs/release/supabase-migration-report.md). Live head = repo head (18/18) |
 | EFRIS maturity | **SIMULATED_AND_TESTED** (level 3 of 6). No request ever sent to URA |
 | CI | Defined, **never run on GitHub** |
 
@@ -46,7 +46,7 @@ D-001..D-024 decided under owner authorisation: `docs/adr/0004-autonomous-mvp-de
 
 ## Open risks / defects
 - R-1 No GitHub credential: work exists only in the local repo until pushed.
-- R-2 Supabase is behind the repo (5 apps' migrations unapplied). Run NEXT_SESSION step 2.
+- R-2 RESOLVED 2026-10-28: Supabase matches repo head (18/18), behavioural RLS/invariant test 13/13 PASS.
 - R-3 Starter chart, costing and rounding rules **need accountant review** (D-007/008/009).
 - R-4 Offline limit for S2S unknown (EF-011); accreditation need unconfirmed (EF-008).
 - R-5 No UI; no CI run; no dependency audit run.

@@ -9,7 +9,7 @@ Branch `feat/mvp-platform-core` (local). Last code commit `b9aa5ce`. 76 tests pa
 2. `cd services/api && export DB_PASSWORD=... SECRET_KEY=x && python -m pytest -q` (expect 76 passed). If you see mass OperationalError, PostgreSQL is simply down.
 
 ## Exact next actions, in order
-1. **Apply pending migrations to Supabase** (project `hcpzsprnrhpfnodvzals`). Generate with `python manage.py sqlmigrate <app> <n>`, strip BEGIN/COMMIT, apply with the Supabase MCP `apply_migration`, then insert the matching `django_migrations` rows. Order: masterdata 0001,0002; accounting 0001,0002; inventory 0001,0002,0003; sales 0001,0002,0003; fiscal 0001,0002. (~43 KB SQL.) Then run `get_advisors`.
+1. ~~Apply pending migrations~~ DONE 2026-10-28 (docs/release/supabase-migration-report.md). Any NEW migration: `sqlmigrate`, strip BEGIN/COMMIT, append the `django_migrations` insert, apply via MCP, verify ledger vs `showmigrations --plan`, then `get_advisors`.
 2. Offline: `SyncOperation` model + `POST /sync/operations/` (batch, per-op status pending/synced/conflict/failed/needs_attention) wrapping pos_sale/receive_stock/payment, with tests for duplicate, out-of-order, revoked access.
 3. App lifecycle state machine (registry, install/disable/uninstall, entitlements) with tests.
 4. Smallest honest cores: HR, projects/tasks, documents/approvals, fleet, notifications; extend reporting.
