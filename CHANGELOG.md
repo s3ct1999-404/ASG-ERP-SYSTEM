@@ -22,3 +22,9 @@ Meaningful user-facing or system-level changes. Format: newest first.
 
 ## 2026-10-28
 - Platform core (identity, tenancy, RBAC scope, RLS, immutable audit); master data, stock ledger, accounting, sales/POS, payments; fiscal boundary with simulator; ADR-0004; EFRIS research addendum. 76 tests.
+
+## 2026-10-29
+- Supabase: applied masterdata/accounting/inventory/sales/fiscal migrations (18/18), verified (docs/release/supabase-migration-report.md).
+- API: read-only `GET /uoms/`.
+- Web: shadcn/ui + Tailwind v4 foundation (ADR-0005); sign-in, tenant switch, organisation, products, stock, invoices; truthful EFRIS/fiscal labelling; 22 tests.
+- Release docs: verification report, known limitations, module coverage matrix. Dependency audits clean.
