@@ -1,0 +1,26 @@
+{
+  "_status": "DRAFT v0 - ASG-012, unapproved. Transition and retry rules are a proposal; the Blueprint (7.2) fixes the six minimum statuses and says transitions and retry rules must be defined.",
+  "initial": "pending",
+  "statuses": ["pending", "syncing", "synced", "conflict", "failed", "needs_attention"],
+  "terminal": ["synced", "failed"],
+  "transitions": [
+    { "from": "pending",         "to": "syncing",         "on": "send_started" },
+    { "from": "syncing",         "to": "synced",          "on": "server_accepted" },
+    { "from": "syncing",         "to": "pending",         "on": "transient_failure_retry" },
+    { "from": "syncing",         "to": "failed",          "on": "server_rejected_permanently" },
+    { "from": "syncing",         "to": "conflict",        "on": "server_reported_conflict" },
+    { "from": "syncing",         "to": "needs_attention", "on": "retries_exhausted" },
+    { "from": "conflict",        "to": "pending",         "on": "conflict_resolved_resubmit" },
+    { "from": "conflict",        "to": "needs_attention", "on": "resolution_requires_user" },
+    { "from": "needs_attention", "to": "pending",         "on": "user_retry" },
+    { "from": "needs_attention", "to": "failed",          "on": "user_marked_unrecoverable" }
+  ],
+  "rules": [
+    "Every retry reuses the same operation ID / idempotency key.",
+    "A timeout after a possible server commit is retried with the same key; the server returns the recorded result and never applies the operation twice.",
+    "Expired authentication pauses the whole queue (operations stay 'pending'); it is not a per-operation failure. Resume after re-authentication.",
+    "'failed' is terminal and stays visible with the server's reason; a corrected action is a NEW operation linked to the original. Nothing is silently discarded.",
+    "An operation whose dependency is failed, conflicted or needs_attention stays 'pending' with a recorded blocked reason.",
+    "Retry timing: exponential backoff with jitter; maximum attempts and delays are implementation parameters to be fixed in the sync ADR (not decided here)."
+  ]
+}

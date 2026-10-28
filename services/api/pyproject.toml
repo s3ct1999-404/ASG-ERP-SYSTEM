@@ -1,0 +1,32 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "DJ"]
+
+ignore = ["DJ008"]  # no Django admin/templates in this API-only project; __str__ is unused
+
+[tool.ruff.lint.per-file-ignores]
+"tenancy/rls.py" = ["S608"]
+"*/migrations/*.py" = ["S608", "E501"]  # SQL is built from module constants only  # SQL built only from module constants, never from input
+"tests/*" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+exclude = ["^\\.venv/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings_test"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings_test"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disable_error_code = ["attr-defined", "no-untyped-def", "arg-type", "union-attr", "index"]

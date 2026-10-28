@@ -1,0 +1,9 @@
+# Direct development/test tools (loose). Pinned set (with base.txt) lives in dev.txt.
+-r base.in
+ruff
+pytest
+pytest-django
+mypy
+django-stubs
+djangorestframework-stubs
+jsonschema   # used by tests/contracts (also a transitive dependency of drf-spectacular)

@@ -1,0 +1,15 @@
+# Uganda compliance record — Tax configuration (VAT, income tax rules that affect the product)
+
+> **First-pass research, 2026-10-27. UNREVIEWED. No tax rate or rule may be hard-coded.** Rates, thresholds and schedules must be **effective-dated configuration** (Blueprint §6.1, §8) reviewed by a qualified tax professional.
+
+| ID | Requirement / observation (paraphrased) | Official source and URL | Date checked | Applies to | Implementation impact | Test evidence | Unresolved questions | Owner | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| TX-001 | A URA publication from April 2024 describes VAT as charged at 18% with input-tax credit along the chain. | URA newsletter FY2023-24 — https://thetaxman.ura.go.ug/wp-content/uploads/2024/05/EFRIS-Volume-1-Issue-2-28TH-APRIL-2024.pdf (**PRIMARY-OLD**) | 2026-10-27 | VAT-registered taxpayers | **Do not use 18% as a code constant.** It is an example of a value that must be configuration with an effective date, because tax laws changed on 1 July 2026 (TX-002) | None | Current standard rate, exempt/zero-rated schedules after the 2026 amendments | Tax reviewer | UNREVIEWED — possibly outdated |
+| TX-002 | Several 2026 tax amendment Acts were reportedly passed for FY2026/27, effective 1 July 2026, touching Income Tax, VAT, Excise, Tax Procedures and others. Secondary sources report, among other things: a higher VAT registration threshold, changes to VAT withholding where e-invoices/e-receipts are issued, and revised PAYE bands. URA's own news list includes a notice about the effective date of the Income Tax (Amendment) Act, 2026 and the Excise Duty (Amendment) Act, 2026 (excerpt only). | URA news listing — https://ura.go.ug/en/category/ura-news/ (**EXCERPT**); advisories: Forvis Mazars, Crowe, Onyango Advocates, Global Law Experts (**SECONDARY**) | 2026-10-27 | All taxpayers | The product needs **versioned tax configuration** with effective dates and per-period application. Specific figures are **not adopted** here | None | **CONFLICT:** one payroll-vendor announcement says URA retracted an earlier confirmation because the Income Tax and Excise bills were returned by the President and not approved, while URA's own news excerpt refers to the Acts being assented. Which provisions are law, and from when, is **unresolved** | Tax reviewer | OPEN — conflicting sources |
+| TX-003 | Rules affecting documents: e-invoices/e-receipts must show the buyer's BRN/NIN/TIN (see EF-004); expenses lacking required e-documents are non-deductible (EF-004). | https://ura.go.ug/en/additional-taxpayers-required-to-use-efris/ (**PRIMARY**) | 2026-10-27 | EFRIS-mandated suppliers' customers | See EF-004 | None | — | Tax reviewer | UNREVIEWED |
+
+## Product rules these findings imply (to be confirmed by the reviewer, none implemented)
+1. Tax code tables are data: rate, scope, effective-from/to, jurisdiction, source reference.
+2. A document is taxed using the configuration effective on its **tax point date**, not the current date.
+3. Changing configuration never rewrites posted entries (reversal/correction only; Blueprint §6.1).
+4. Configuration changes need permission and an audit event.

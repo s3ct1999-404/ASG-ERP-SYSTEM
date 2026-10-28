@@ -1,0 +1,28 @@
+{
+  "_status": "DRAFT v0 - ASG-014, unapproved. Transition table is a proposal; the Blueprint (3.1) fixes the states and the principles, not every edge.",
+  "initial": "available",
+  "states": ["available", "installing", "installed", "upgrading", "disabled", "uninstalling", "failed"],
+  "transitions": [
+    { "from": "available",    "to": "installing",   "on": "install_requested" },
+    { "from": "installing",   "to": "installed",    "on": "install_succeeded" },
+    { "from": "installing",   "to": "failed",       "on": "install_failed" },
+    { "from": "installed",    "to": "upgrading",    "on": "upgrade_requested" },
+    { "from": "upgrading",    "to": "installed",    "on": "upgrade_succeeded" },
+    { "from": "upgrading",    "to": "failed",       "on": "upgrade_failed" },
+    { "from": "installed",    "to": "disabled",     "on": "disable_requested" },
+    { "from": "disabled",     "to": "installed",    "on": "enable_requested" },
+    { "from": "installed",    "to": "uninstalling", "on": "uninstall_requested" },
+    { "from": "disabled",     "to": "uninstalling", "on": "uninstall_requested" },
+    { "from": "uninstalling", "to": "available",    "on": "uninstall_succeeded" },
+    { "from": "uninstalling", "to": "failed",       "on": "uninstall_failed" },
+    { "from": "failed",       "to": "installing",   "on": "retry_install" },
+    { "from": "failed",       "to": "upgrading",    "on": "retry_upgrade" },
+    { "from": "failed",       "to": "uninstalling", "on": "retry_uninstall" }
+  ],
+  "notes": [
+    "A failed record stores the failed operation and the previous state; only the matching retry edge is allowed for that operation.",
+    "Validation failures during install_requested (dependencies, compatibility, permissions, configuration, migration plan) leave the app in 'available' with the errors recorded and an audit event; they do not enter 'installing'.",
+    "At most one lifecycle operation per (tenant, app) at a time.",
+    "Rollback vs forward-fix after a failed upgrade is an undecided policy (Blueprint 22) - not encoded here."
+  ]
+}
