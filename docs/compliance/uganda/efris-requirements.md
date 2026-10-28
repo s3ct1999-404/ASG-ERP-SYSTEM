@@ -18,3 +18,14 @@ Vendor and blog pages variously say EFRIS applies to "all companies", to "VAT-re
 
 ## What this record does NOT establish
 It does not say ASG ERP is permitted to submit to EFRIS, what its technical interface is, whether accreditation is needed, or that any behaviour is legally sufficient. Those require the EFRIS handbook/technical documentation, URA confirmation, and professional review.
+
+## Addendum 2026-10-28 (second research pass, still UNREVIEWED by a qualified professional)
+
+| ID | Finding (paraphrased) | Source | Evidence | Impact | Open |
+|---|---|---|---|---|---|
+| EF-008 | URA publishes dated lists of **accredited EFRIS software integrators**, described as vendors who fulfilled URA's integration requirements, for taxpayers who want to connect billing/ERP systems. Latest list found: 25 Feb 2025. | https://ura.go.ug/en/download/list-of-accredited-efris-software-integrators-as-at-25-february-2025/ | PRIMARY (page excerpt) | A customer wanting ERP-to-EFRIS will expect ASG to be on this list. **Whether ASG must itself be accredited is not confirmed**; plan on yes. | Ask URA: accreditation process, fees, timeline. Human action. |
+| EF-009 | System-to-system integration is via a web-service API with a **test portal** and a published **UAT readiness checklist** (built against the EFRIS Interface User Requirements Specification v1.5). | https://ura.go.ug/en/download/efris-system-to-system-integration-uat-readiness-checklist and https://ura.go.ug/?p=9829 | PRIMARY (excerpt) | Sandbox verification needs a registered test-portal account and URA's current interface spec. | Human: register on the test portal; obtain spec and credentials. |
+| EF-010 | S2S integration can use an **offline-mode enabler** supplied by URA (recommended in a user guide), with interface codes such as T104 (symmetric key), T115 (system dictionary), T109 (invoice upload). Requests use content encryption and RSA signing. | URA S2S user guide (copy on Scribd, unofficial host) | SECONDARY | Wire format NOT implemented. Provider boundary only. Must be re-verified against the official spec. | Obtain official spec. |
+| EF-011 | URA's April 2024 newsletter says its mobile and desktop client apps work with internet but can operate offline for up to 5 days. | https://thetaxman.ura.go.ug/wp-content/uploads/2024/05/EFRIS-Volume-1-Issue-2-28TH-APRIL-2024.pdf | PRIMARY-OLD | This is the **client-app** limit. The limit for an S2S integration is **not established**. `FiscalSettings.offline_window_hours` is left empty; ASG does not enforce or promise any window. | Confirm S2S offline limit with URA. |
+
+**Current maturity: SIMULATED_AND_TESTED.** The provider boundary, status machine, idempotency, retry/reconcile, redaction and audit are implemented and tested against a labelled simulator (tests/test_fiscal.py). No request has ever been sent to URA. `UraS2SProvider` refuses to run without credentials.

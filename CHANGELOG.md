@@ -19,3 +19,6 @@ Meaningful user-facing or system-level changes. Format: newest first.
 - Baseline planning docs, ADR-0001 (accepted), ADR-0002 (**proposed**, stack not selected), decision register, scoped rules, Uganda compliance templates.
 - Master Blueprint restored to `docs/ASG_ERP_MASTER_BLUEPRINT.md` (was deleted from `main` in `7ff17b7`; see D-016).
 - No application code; no stack selected.
+
+## 2026-10-28
+- Platform core (identity, tenancy, RBAC scope, RLS, immutable audit); master data, stock ledger, accounting, sales/POS, payments; fiscal boundary with simulator; ADR-0004; EFRIS research addendum. 76 tests.
