@@ -893,6 +893,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaxCode'
           description: ''
+  /api/v1/uoms/:
+    get:
+      operationId: uoms_retrieve
+      description: |-
+        Read-only list of the tenant's units of measure (RLS scopes rows to the tenant).
+
+        Needed by clients to create products; there is no write endpoint yet (known gap).
+      tags:
+      - uoms
+      responses:
+        '200':
+          description: No response body
   /api/v1/warehouses/:
     get:
       operationId: warehouses_retrieve
