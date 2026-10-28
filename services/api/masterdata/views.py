@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from core.viewsets import ScopedListCreate
 from masterdata.models import Partner, Product, TaxCode, UnitOfMeasure, Warehouse
+from tenancy.base import TenantAPIView
 
 
 def _ser(m: type, fields: list[str]) -> type[serializers.ModelSerializer]:  # type: ignore[type-arg]
@@ -46,4 +52,17 @@ ProductView = _view(
     "sku",
 )
 WarehouseView = _view(Warehouse, ["company", "branch", "code", "name"], "warehouse", "code")
-_ = UnitOfMeasure
+
+
+class UnitOfMeasureListView(TenantAPIView):
+    """Read-only list of the tenant's units of measure (RLS scopes rows to the tenant).
+
+    Needed by clients to create products; there is no write endpoint yet (known gap).
+    """
+
+    permission_map: ClassVar[dict[str, str]] = {"GET": "masterdata.read"}
+
+    @extend_schema(responses={200: None})
+    def get(self, request: Request) -> Response:
+        rows = UnitOfMeasure.objects.order_by("code")
+        return Response([{"id": u.id, "code": u.code, "name": u.name} for u in rows])
